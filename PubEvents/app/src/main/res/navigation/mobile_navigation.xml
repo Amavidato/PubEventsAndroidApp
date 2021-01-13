@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.amavidato.pubevents.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.amavidato.pubevents.ui.account.settings.SettingsFragment"
+        android:label="@string/menu_settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <activity
+        android:id="@+id/nav_login"
+        android:name="com.amavidato.pubevents.ui.account.login.LoginActivity"
+        android:label="@string/menu_login"
+        tools:layout="@layout/activity_login"/>
+
+    <fragment
+        android:id="@+id/nav_logout"
+        android:name="com.amavidato.pubevents.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_find_pub"
+        android:name="com.amavidato.pubevents.ui.findpub.FindPubsFragment"
+        android:label="nav_find_pubs"
+        tools:layout="@layout/fragment_findpub_map">
+        <action
+            android:id="@+id/action_find_pub_to_pubsList"
+            app:destination="@id/pubsListFragment" />
+        <action
+            android:id="@+id/action_open_pubFragment"
+            app:destination="@id/pubFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pubsListFragment"
+        android:name="com.amavidato.pubevents.ui.findpub.list.PubsListFragment"
+        android:label="PubsListFragment"
+        android:layout="@layout/fragment_publist">
+
+        <action
+            android:id="@+id/action_open_pub_page"
+            app:destination="@id/pubFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_followed_pubs"
+        android:name="com.amavidato.pubevents.ui.followed_pubs.FollowedPubsFragment"
+        android:label="@string/menu_followed_pubs"
+        tools:layout="@layout/fragment_followedpubs">
+
+        <action
+            android:id="@+id/action_open_pub_page"
+            app:destination="@id/pubFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pubFragment"
+        android:name="com.amavidato.pubevents.ui.pub.PubFragment"
+        android:label="fragment_pub"
+        tools:layout="@layout/fragment_pub" >
+        <argument
+            android:name="@string/pub_id"
+            app:argType="string"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_acquired_events"
+        android:name="com.amavidato.pubevents.ui.acquired_events.AcquiredEventsFragment"
+        android:label="@string/menu_acquired_events"
+        tools:layout="@layout/fragment_acquired_events">
+        <action
+            android:id="@+id/action_open_eventFragment"
+            app:destination="@id/eventFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/eventFragment"
+        android:name="com.amavidato.pubevents.ui.events.EventFragment"
+        android:label="fragment_event"
+        tools:layout="@layout/fragment_event" >
+        <argument
+            android:name="@string/event_id"
+            app:argType="string"/>
+    </fragment>
+
+</navigation>

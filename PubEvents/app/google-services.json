@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "588871637175",
+    "firebase_url": "https://pubevents-amavidato.firebaseio.com",
+    "project_id": "pubevents-amavidato",
+    "storage_bucket": "pubevents-amavidato.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:588871637175:android:197ecd5a5f22a7f89d5532",
+        "android_client_info": {
+          "package_name": "com.amavidato.pubevents"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "588871637175-g5b30q5h5g1t6ueasbnuqrjofun291ji.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.amavidato.pubevents",
+            "certificate_hash": "a2acafef7460f485bb638e7aa8d8677c44bcb85e"
+          }
+        },
+        {
+          "client_id": "588871637175-787qadqlfo9ehhm5ongo71h0ivfis404.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABappHASFlx7Z7jTrNi74voZuDuKOjP0s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "588871637175-787qadqlfo9ehhm5ongo71h0ivfis404.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

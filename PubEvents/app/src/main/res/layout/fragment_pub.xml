@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pub_fragment_layout_container"
+    android:name="com.amavidato.pubevents.ui.pub.PubFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    tools:context=".ui.pub.PubFragment">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/pubview_follow_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginRight="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="200dp"
+                app:cardCornerRadius="50dp"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:id="@+id/pubview_follow_btn_rmv"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:srcCompat="@drawable/ic_baseline_remove_24"/>
+
+                <ImageView
+                    android:id="@+id/pubview_follow_btn_add"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:srcCompat="@drawable/ic_baseline_add_24"/>
+            </androidx.cardview.widget.CardView>
+
+            <ImageView
+                android:id="@+id/pubview_image"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_menu_gallery" />
+
+            <TextView
+                android:id="@+id/pubview_name"
+                android:layout_width="300dp"
+                android:layout_height="39dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
+                android:text="Pub Name"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/pubview_image" />
+
+            <ImageView
+                android:id="@+id/pubview_rating_img"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="16dp"
+                app:srcCompat="@drawable/ic_baseline_star_24"
+                app:layout_constraintStart_toEndOf="@+id/pubview_name"
+                app:layout_constraintTop_toBottomOf="@+id/pubview_image"/>
+
+            <TextView
+                android:id="@+id/pubview_overall_rating"
+                android:layout_width="44dp"
+                android:layout_height="22dp"
+                android:layout_marginTop="20dp"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/pubview_rating_img"
+                app:layout_constraintTop_toBottomOf="@+id/pubview_image"/>
+
+            <TextView
+                android:id="@+id/pubview_city"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:gravity="center_vertical"
+                android:text="City"
+                app:layout_constraintEnd_toEndOf="@+id/pubview_name"
+                app:layout_constraintStart_toEndOf="@+id/pubview_geopoint_img"
+                app:layout_constraintTop_toBottomOf="@+id/pubview_name" />
+
+            <ImageView
+                android:id="@+id/pubview_geopoint_img"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_row="1"
+                android:layout_column="1"
+                app:srcCompat="@drawable/ic_geopoint_24"
+                app:layout_constraintStart_toStartOf="@+id/pubview_name"
+                app:layout_constraintTop_toBottomOf="@+id/pubview_name" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/pub_otherinfo_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginRight="24dp"
+                app:layout_constraintEnd_toEndOf="@+id/pubview_city"
+                app:layout_constraintStart_toStartOf="@+id/pubview_geopoint_img"
+                app:layout_constraintTop_toBottomOf="@+id/pubview_city">
+
+                <TextView
+                    android:id="@+id/other_info_title"
+                    android:layout_width="130dp"
+                    android:layout_height="32dp"
+                    android:gravity="center_vertical"
+                    android:text="Other info:"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/price_str"
+                    android:layout_width="130dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="32dp"
+                    android:gravity="center_vertical"
+                    android:text="Price:"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/other_info_title" />
+
+                <ImageView
+                    android:id="@+id/price_img_1"
+                    android:layout_width="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:layout_height="32dp"
+                    app:layout_constraintStart_toEndOf="@+id/price_str"
+                    app:layout_constraintTop_toBottomOf="@+id/other_info_title" />
+
+                <ImageView
+                    android:id="@+id/price_img_2"
+                    android:layout_marginTop="32dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    app:layout_constraintStart_toEndOf="@+id/price_img_1"
+                    app:layout_constraintTop_toBottomOf="@+id/other_info_title" />
+
+                <ImageView
+                    android:id="@+id/price_img_3"
+                    android:layout_marginTop="32dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    app:layout_constraintStart_toEndOf="@+id/price_img_2"
+                    app:layout_constraintTop_toBottomOf="@+id/other_info_title" />
+
+                <TextView
+                    android:id="@+id/avg_age_str"
+                    android:layout_width="130dp"
+                    android:layout_height="32dp"
+                    android:gravity="center_vertical"
+                    android:text="Average Age:"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="@+id/price_str"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/price_str"
+                    app:layout_constraintTop_toBottomOf="@+id/price_str" />
+
+                <TextView
+                    android:id="@+id/avg_age_value"
+                    android:layout_width="46dp"
+                    android:layout_height="32dp"
+                    android:gravity="center_vertical"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/avg_age_str"
+                    app:layout_constraintTop_toBottomOf="@+id/price_img_1" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/pub_container_rating_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/pub_otherinfo_container"
+                app:layout_constraintStart_toStartOf="@+id/pub_otherinfo_container"
+                app:layout_constraintEnd_toEndOf="@+id/pub_otherinfo_container">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/pub_btn_open_ratings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:textStyle="bold"
+                    android:text="See all ratings"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <ProgressBar
+                    android:id="@+id/pub_loading_list_progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="parent"
+                    app:layout_constraintVertical_bias="0.3" />
+
+                <include layout="@layout/add_rating_form"
+                    android:id="@+id/pubview_container_rating_form"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/pub_container_ratings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/pub_container_rating_form"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

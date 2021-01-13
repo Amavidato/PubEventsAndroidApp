@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pubview_container_rating_form">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/rating_form_value_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:text="Select your rate:"/>
+
+        <Spinner
+            android:id="@+id/rating_form_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:entries="@array/Rating_values"/>
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="16dp"
+            app:srcCompat="@drawable/ic_baseline_star_24"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <EditText
+        android:id="@+id/rating_form_comment"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:hint="Add a comment..."
+        android:gravity="start"
+        android:ellipsize="start"
+        app:layout_constraintTop_toBottomOf="@id/rating_form_value_container"
+        android:text=""/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/rating_form_add_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/rating_form_comment"
+        app:layout_constraintStart_toStartOf="@id/rating_form_value_container"
+        app:layout_constraintEnd_toEndOf="@id/rating_form_value_container"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:text="Add your rating"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,363 @@
+<resources>
+    <string name="app_name">PubEvents</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_followed_pubs">Followed Pubs</string>
+    <string name="menu_acquired_events">Acquired Events</string>
+    <string name="menu_find_pub">Find Pub</string>
+    <string name="menu_submenu_title">Account</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_login">Login</string>
+    <string name="menu_logout">Logout</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_login">Login</string>
+    <string name="action_register"><u>Register</u></string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Username must be >5 and &lt;30 characters</string>
+    <string name="invalid_email">Not a valid email</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="action_login_withGoogle">LOGIN WITH GOOGLE</string>
+    <string name="prompt_username">Username</string>
+    <string name="menu_home">Home</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="findmode_list_text">List</string>
+    <string name="findmode_map_text">map</string>
+
+
+    <string name="email_not_verified_text">Email not verified!\nPlease, check your email to verify your email address before login.</string>
+    <string name="verify_email_text">Please, check your email to verify your email address before login.</string>
+    <string name="no_account_with_this_email">There exists no account associated to this email</string>
+    <string name="wrong_email">Wrong password. Try again with another password</string>
+    <string name="missing_image">missing image</string>
+    <string name="action_search">Search</string>
+    <string name="pub_id">pub_id</string>
+    <string name="event_id">event_id</string>
+    <string name="filter_title">Filter by:</string>
+    <string name="sort_title">Sort by:</string>
+
+    <string-array name="Filter_Options_pubs">
+        <item>Name</item>
+        <item>City</item>
+    </string-array>
+
+    <string-array name="Filter_Options_events">
+        <item>Name</item>
+        <item>Pub</item>
+    </string-array>
+
+    <string-array name="Sort_Options_pubs">
+        <item>Name (Asc)</item>
+        <item>Name (Desc)</item>
+        <item>City name (Asc)</item>
+        <item>City name (Desc)</item>
+        <item>Closest to Farthest</item>
+        <item>Farthest to Closest</item>
+        <item>Overall Rate (Asc)</item>
+        <item>Overall Rate (Desc)</item>
+        <item>Price (Asc)</item>
+        <item>Price (Desc)</item>
+        <item>Avg. age (Asc)</item>
+        <item>Avg. age (Desc)</item>
+        <item></item>
+    </string-array>
+
+    <string-array name="Rating_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
+    <string name="map_style_night">
+  [
+    {
+      \"featureType\": \"all\",
+      \"elementType\": \"geometry\",
+      \"stylers\": [
+        {
+          \"color\": \"#242f3e\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"all\",
+      \"elementType\": \"labels.text.stroke\",
+      \"stylers\": [
+        {
+          \"lightness\": -80
+        }
+      ]
+    },
+    {
+      \"featureType\": \"administrative\",
+      \"elementType\": \"labels.text.fill\",
+      \"stylers\": [
+        {
+          \"color\": \"#746855\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"administrative.locality\",
+      \"elementType\": \"labels.text.fill\",
+      \"stylers\": [
+        {
+          \"color\": \"#d59563\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"poi\",
+      \"elementType\": \"labels.text.fill\",
+      \"stylers\": [
+        {
+          \"color\": \"#d59563\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"poi.park\",
+      \"elementType\": \"geometry\",
+      \"stylers\": [
+        {
+          \"color\": \"#263c3f\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"poi.park\",
+      \"elementType\": \"labels.text.fill\",
+      \"stylers\": [
+        {
+          \"color\": \"#6b9a76\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"road\",
+      \"elementType\": \"geometry.fill\",
+      \"stylers\": [
+        {
+          \"color\": \"#2b3544\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"road\",
+      \"elementType\": \"labels.text.fill\",
+      \"stylers\": [
+        {
+          \"color\": \"#9ca5b3\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"road.arterial\",
+      \"elementType\": \"geometry.fill\",
+      \"stylers\": [
+        {
+          \"color\": \"#38414e\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"road.arterial\",
+      \"elementType\": \"geometry.stroke\",
+      \"stylers\": [
+        {
+          \"color\": \"#212a37\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"road.highway\",
+      \"elementType\": \"geometry.fill\",
+      \"stylers\": [
+        {
+          \"color\": \"#746855\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"road.highway\",
+      \"elementType\": \"geometry.stroke\",
+      \"stylers\": [
+        {
+          \"color\": \"#1f2835\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"road.highway\",
+      \"elementType\": \"labels.text.fill\",
+      \"stylers\": [
+        {
+          \"color\": \"#f3d19c\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"road.local\",
+      \"elementType\": \"geometry.fill\",
+      \"stylers\": [
+        {
+          \"color\": \"#38414e\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"road.local\",
+      \"elementType\": \"geometry.stroke\",
+      \"stylers\": [
+        {
+          \"color\": \"#212a37\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"transit\",
+      \"elementType\": \"geometry\",
+      \"stylers\": [
+        {
+          \"color\": \"#2f3948\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"transit.station\",
+      \"elementType\": \"labels.text.fill\",
+      \"stylers\": [
+        {
+          \"color\": \"#d59563\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"water\",
+      \"elementType\": \"geometry\",
+      \"stylers\": [
+        {
+          \"color\": \"#17263c\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"water\",
+      \"elementType\": \"labels.text.fill\",
+      \"stylers\": [
+        {
+          \"color\": \"#515c6d\"
+        }
+      ]
+    },
+    {
+      \"featureType\": \"water\",
+      \"elementType\": \"labels.text.stroke\",
+      \"stylers\": [
+        {
+          \"lightness\": -20
+        }
+      ]
+    }
+  ]
+  </string>
+
+  <string name="map_style_day">
+  [
+    {
+        \"featureType\": \"administrative\",
+        \"elementType\": \"all\",
+        \"stylers\": [
+            {
+                \"visibility\": \"on\"
+            },
+            {
+                \"lightness\": 33
+            }
+        ]
+    },
+    {
+        \"featureType\": \"poi.park\",
+        \"elementType\": \"geometry\",
+        \"stylers\": [
+            {
+            \"color\": \"#c9efbb\"
+            }
+        ]
+    },
+    {
+        \"featureType\": \"poi.park\",
+        \"elementType\": \"labels\",
+        \"stylers\": [
+            {
+                \"visibility\": \"on\"
+            },
+            {
+                \"lightness\": 20
+            }
+        ]
+    },
+    {
+        \"featureType\": \"road\",
+        \"elementType\": \"all\",
+        \"stylers\": [
+            {
+                \"lightness\": 20
+            }
+        ]
+    },
+    {
+        \"featureType\": \"road.highway\",
+        \"elementType\": \"geometry\",
+        \"stylers\": [
+            {
+                \"color\": \"#fff5b3\"
+            }
+        ]
+    },
+    {
+        \"featureType\": \"road.arterial\",
+        \"elementType\": \"geometry\",
+        \"stylers\": [
+            {
+                \"color\": \"#ffffff\"
+            }
+        ]
+    },
+    {
+        \"featureType\": \"road.local\",
+        \"elementType\": \"geometry\",
+        \"stylers\": [
+            {
+                \"color\": \"#ffffff\"
+            }
+        ]
+    },
+    {
+        \"featureType\": \"water\",
+        \"elementType\": \"all\",
+        \"stylers\": [
+            {
+                \"visibility\": \"on\"
+            },
+            {
+                \"color\": \"#aadaff\"
+            }
+        ]
+    }
+  ]
+  </string>
+
+
+</resources>
