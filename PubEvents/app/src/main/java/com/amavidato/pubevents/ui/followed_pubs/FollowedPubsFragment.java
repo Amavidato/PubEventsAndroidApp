@@ -81,7 +81,7 @@ public class FollowedPubsFragment extends Fragment {
                 if(view != null){
                     String selected = ((TextView) view).getText().toString();
                     if(recyclerAdapter != null){
-                        recyclerAdapter.onFilterOptSelected(com.amavidato.pubevents.ui.findpub.list.PubsListFragment.FilterOptions.valueOf(selected.toUpperCase()),searchView.getQuery().toString());
+                        //recyclerAdapter.onFilterOptSelected(com.amavidato.pubevents.ui.findpub.list.PubsListFragment.FilterOptions.valueOf(selected.toUpperCase()),searchView.getQuery().toString());
                     }
                 }
             }
@@ -92,7 +92,7 @@ public class FollowedPubsFragment extends Fragment {
             }
         });
 
-        spinnerSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        /*spinnerSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (view != null) {
@@ -116,7 +116,7 @@ public class FollowedPubsFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
-        });
+        });*/
         // Set the adapter
         if (listView instanceof RecyclerView) {
             progressBar.setVisibility(View.VISIBLE);
@@ -262,7 +262,7 @@ public class FollowedPubsFragment extends Fragment {
     }
 
     private void initializeRecyclerAdapter(List<PubItem> pubs) {
-        if(recyclerAdapter != null) {
+       /* if(recyclerAdapter != null) {
             String selected = spinnerFilter.getSelectedItem().toString();
             recyclerAdapter.onFilterOptSelected(PubsListFragment.FilterOptions.valueOf(selected.toUpperCase()), searchView.getQuery().toString());
 
@@ -276,10 +276,10 @@ public class FollowedPubsFragment extends Fragment {
                 recyclerAdapter.onSortOptSelected(opt,null);
                 recyclerAdapter.notifyDataSetChanged();
             }
-        }
+        }*/
     }
 
-    private void onSortProximity(final PubsListFragment.SortOptions opt){
+    /*private void onSortProximity(final PubsListFragment.SortOptions opt){
         if (ActivityCompat.checkSelfPermission(this.getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -305,7 +305,7 @@ public class FollowedPubsFragment extends Fragment {
                         }
                     }
                 });
-    }
+    }*/
 
 
 }

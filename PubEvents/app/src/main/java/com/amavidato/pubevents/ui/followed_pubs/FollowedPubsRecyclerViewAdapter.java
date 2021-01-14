@@ -40,14 +40,14 @@ public class FollowedPubsRecyclerViewAdapter extends RecyclerView.Adapter<Follow
     private final Activity mActivity;
     private String currentFilterString;
     private Location lastKnownLoc;
-    private PubsListFragment.FilterOptions selectedFilterOpt = PubsListFragment.FilterOptions.values()[0];
-    private PubsListFragment.SortOptions selectedSortOpt = PubsListFragment.SortOptions.values()[0];
+   // private PubsListFragment.FilterOptions selectedFilterOpt = PubsListFragment.FilterOptions.values()[0];
+    //private PubsListFragment.SortOptions selectedSortOpt = PubsListFragment.SortOptions.values()[0];
 
 
     private Filter filter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
-            Log.d(TAG, "PERFORM FILTERING:"+charSequence);
+            /*Log.d(TAG, "PERFORM FILTERING:"+charSequence);
             List<PubItem> filtered = new ArrayList<>();
             currentFilterString = charSequence.toString();
             if(currentFilterString.isEmpty()){
@@ -73,17 +73,18 @@ public class FollowedPubsRecyclerViewAdapter extends RecyclerView.Adapter<Follow
             }
             FilterResults filterResults = new FilterResults();
             filterResults.values = filtered;
-            return filterResults;
+            return filterResults;*/
+            return null;
         }
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            pubsToShow.clear();
+            /*pubsToShow.clear();
             pubsToShow.addAll((Collection<? extends PubItem>) filterResults.values);
             Log.d("PUBLISH FILTER","results:ALL"+allFollowedPubs+"\nTO SHOW"+pubsToShow);
             //filter.filter(currentFilterString);
             onSortOptSelected(selectedSortOpt,lastKnownLoc);
-            notifyDataSetChanged();
+            notifyDataSetChanged();*/
         }
     };
 
@@ -105,8 +106,8 @@ public class FollowedPubsRecyclerViewAdapter extends RecyclerView.Adapter<Follow
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = pubsToShow.get(position);
         holder.mImgView.setImageResource(R.drawable.ic_menu_gallery);
-        holder.mNameView.setText(pubsToShow.get(position).pub.getName());
-        holder.mCityView.setText(pubsToShow.get(position).pub.getCity());
+        //holder.mNameView.setText(pubsToShow.get(position).pub.getName());
+        //holder.mCityView.setText(pubsToShow.get(position).pub.getCity());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,12 +126,12 @@ public class FollowedPubsRecyclerViewAdapter extends RecyclerView.Adapter<Follow
     public Filter getFilter() { return filter; }
 
 
-
+/*
     public void onFilterOptSelected(PubsListFragment.FilterOptions opt, String s){
         selectedFilterOpt = opt;
         filter.filter(s);
-    }
-
+    }*/
+/*
     public boolean onSortOptSelected(PubsListFragment.SortOptions opt, Location currentLoc){
         selectedSortOpt = opt;
         switch (opt){
@@ -272,7 +273,7 @@ public class FollowedPubsRecyclerViewAdapter extends RecyclerView.Adapter<Follow
                 break;
         }
         return true;
-    }
+    }*/
 
     public List<PubItem> getPubsToShow() {
         return pubsToShow;

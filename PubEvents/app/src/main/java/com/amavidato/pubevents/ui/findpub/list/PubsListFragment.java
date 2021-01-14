@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -24,6 +25,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -32,6 +35,9 @@ import android.widget.Toast;
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Pub;
 import com.amavidato.pubevents.utility.db.DBManager;
+import com.amavidato.pubevents.utility.general_list_fragment.GeneralListFragment;
+import com.amavidato.pubevents.utility.general_list_fragment.MyItem;
+import com.amavidato.pubevents.utility.general_list_fragment.SortOptions;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,28 +53,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class PubsListFragment extends Fragment{
+public class PubsListFragment extends GeneralListFragment {
 
     private static final String TAG = PubsListFragment.class.getSimpleName();
-
-    private ProgressBar progressBar;
-    private PubListRecyclerViewAdapter recyclerAdapter;
-    private AppCompatSpinner spinnerFilter;
-
-    public enum FilterOptions {NAME, CITY;}
-
-    private AppCompatSpinner spinnerSort;
-
-    public enum SortOptions {
-        NAME_ASC, NAME_DESC, CITY_NAME_ASC, CITY_NAME_DESC,
-        CLOSEST_TO_FARTHEST, FARTHEST_TO_CLOSEST, OVERALL_RATE_ASC, OVERALL_RATE_DESC,
-        PRICE_ASC, PRICE_DESC, AVG_AGE_ASC, AVG_AGE_DESC
-    }
-
-    private SearchView searchView;
-
-    private FusedLocationProviderClient fusedLocationClient;
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -77,64 +64,40 @@ public class PubsListFragment extends Fragment{
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_publist, container, false);
-        View listView = view.findViewById(R.id.publist_list);
-        progressBar = view.findViewById(R.id.publist_loading_list);
-        progressBar.setVisibility(View.VISIBLE);
-        spinnerFilter = view.findViewById(R.id.publist_filter_option);
-        spinnerSort = view.findViewById(R.id.publist_sort_option);
-        spinnerFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (view != null) {
-                    String selected = ((TextView) view).getText().toString();
-                    if (recyclerAdapter != null) {
-                        recyclerAdapter.onFilterOptSelected(FilterOptions.valueOf(selected.toUpperCase()), searchView.getQuery().toString());
-                    }
-                }
-            }
+    protected void initializeFilterAndSortOptions() {
+        filterOptions = new FilterOptionsPub();
+        sortOptions = new SortOptionsPub();
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.Filter_Options_pubs, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFilter.setAdapter(adapter);
 
-            }
-        });
-        spinnerSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (view != null) {
-                    String selected = ((TextView) view).getText().toString();
-                    if (recyclerAdapter != null) {
-                        selected = spinnerSort.getSelectedItem().toString();
-                        selected = selected.toUpperCase().replace("(","")
-                                .replace(")","").replace(".","").replace(" ", "_");
-                        final SortOptions opt = SortOptions.valueOf(selected);
-                        if(opt.equals(SortOptions.CLOSEST_TO_FARTHEST) || opt.equals(SortOptions.FARTHEST_TO_CLOSEST)){
-                            onSortProximity(opt);
-                        }else{
-                            recyclerAdapter.onSortOptSelected(opt,null);
-                            recyclerAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-            }
+        adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.Sort_Options_pubs, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSort.setAdapter(adapter);
+    }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+    @Override
+    protected View createSpecificListLayout() {
+        return (LinearLayout) getLayoutInflater().inflate(R.layout.fragment_publist, null);
+    }
 
-            }
-        });
+    @Override
+    protected View createSpecificRecyclerView() {
+        return specificListLayout.findViewById(R.id.frag_recycler_view_publist);
+    }
+
+    @Override
+    protected void popolateSpecificRecyclerView() {
         // Set the adapter
-        if (listView instanceof RecyclerView) {
-            final Context context = listView.getContext();
-            final RecyclerView recyclerView = (RecyclerView) listView;
+        if (specificRecyclerView instanceof RecyclerView) {
+            final Context context = specificRecyclerView.getContext();
+            final RecyclerView recyclerView = (RecyclerView) specificRecyclerView;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
             DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
             recyclerView.addItemDecoration(divider);
-            final List<PubItem> pubs = new ArrayList<>();
+            final List<MyItem> pubs = new ArrayList<>();
             //Query to retrieve pubs information
             FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.PUBS)
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -192,98 +155,5 @@ public class PubsListFragment extends Fragment{
                 }
             });
         }
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
-        setHasOptionsMenu(true);
-        return view;
     }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchItem.setVisible(true);
-
-        searchView = (SearchView) searchItem.getActionView();
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                //if query is empty, override default onClose by doing nothing
-                if (searchView.getQuery().toString().isEmpty()) {
-                    return true;
-                }
-                //else run default onClose (it will delete the query)
-                return false;
-            }
-        });
-
-        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        searchView.setIconified(false);
-        searchView.setQueryHint("Search...");
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                recyclerAdapter.setCurrentFilterString(s);
-                recyclerAdapter.getFilter().filter(s);
-                return false;
-            }
-        });
-
-        if (recyclerAdapter != null && recyclerAdapter.getCurrentFilterString() != null && !recyclerAdapter.getCurrentFilterString().isEmpty()) {
-            searchView.setQuery(recyclerAdapter.getCurrentFilterString(), false);
-            searchItem.expandActionView();
-        }
-    }
-
-    private void initializeRecyclerAdapter(List<PubItem> pubs) {
-        if(recyclerAdapter != null) {
-            String selected = spinnerFilter.getSelectedItem().toString();
-            recyclerAdapter.onFilterOptSelected(FilterOptions.valueOf(selected.toUpperCase()), searchView.getQuery().toString());
-
-            selected = spinnerSort.getSelectedItem().toString();
-            selected = selected.toUpperCase().replace("(","")
-                    .replace(")","").replace(".","").replace(" ", "_");
-            final SortOptions opt = SortOptions.valueOf(selected);
-            if(opt.equals(SortOptions.CLOSEST_TO_FARTHEST) || opt.equals(SortOptions.FARTHEST_TO_CLOSEST)){
-                onSortProximity(opt);
-            }else{
-                recyclerAdapter.onSortOptSelected(opt,null);
-                recyclerAdapter.notifyDataSetChanged();
-            }
-        }
-    }
-
-    private void onSortProximity(final SortOptions opt){
-        if (ActivityCompat.checkSelfPermission(this.getContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this.getActivity(), new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            if(!recyclerAdapter.onSortOptSelected(opt,location)){
-                                Toast.makeText(getContext(),"Error getting your current location!\nPlease, verify the location permissions, the gps and try again.",Toast.LENGTH_LONG).show();
-                            };
-                            recyclerAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
-    }
-
 }

@@ -18,14 +18,13 @@ public abstract class GeneralRecyclerViewAdapter extends RecyclerView.Adapter<Ge
 
     private static final String TAG = GeneralRecyclerViewAdapter.class.getSimpleName();
 
-    private final List<MyItem> all;
-    private final List<MyItem> toShow;
-    private final Activity mActivity;
-    private String currentFilterString;
-    private Location lastKnownLoc;
-    private String selectedFilterOpt;
-    private String selectedSortOpt;
-
+    protected final List<MyItem> all;
+    protected final List<MyItem> toShow;
+    protected final Activity mActivity;
+    protected String currentFilterString;
+    protected Location lastKnownLoc;
+    protected String selectedFilterOpt;
+    protected String selectedSortOpt;
 
     private Filter filter = new Filter() {
         @Override
@@ -50,7 +49,6 @@ public abstract class GeneralRecyclerViewAdapter extends RecyclerView.Adapter<Ge
             toShow.clear();
             toShow.addAll((Collection<? extends MyItem>) filterResults.values);
             Log.d("PUBLISH FILTER","results:ALL"+all+"\nTO SHOW"+toShow);
-            //filter.filter(currentFilterString);
             onSortOptSelected(selectedSortOpt,lastKnownLoc);
             notifyDataSetChanged();
         }
@@ -64,7 +62,7 @@ public abstract class GeneralRecyclerViewAdapter extends RecyclerView.Adapter<Ge
 
     @Override
     public GeneralViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return customOnCreateViewHolder();
+        return customOnCreateViewHolder(parent, viewType);
     }
 
     @Override
@@ -107,7 +105,7 @@ public abstract class GeneralRecyclerViewAdapter extends RecyclerView.Adapter<Ge
         this.currentFilterString = currentFilterString;
     }
 
-    protected abstract GeneralViewHolder customOnCreateViewHolder();
+    protected abstract GeneralViewHolder customOnCreateViewHolder(ViewGroup parent, int viewType);
 
     protected abstract void customOnBindViewHolder(GeneralViewHolder holder, int position);
 

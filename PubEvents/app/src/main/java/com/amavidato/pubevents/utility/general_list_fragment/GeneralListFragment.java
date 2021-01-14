@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Debug;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,12 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
@@ -31,21 +35,36 @@ import java.util.List;
 public abstract class GeneralListFragment extends Fragment {
     private static final String TAG = GeneralListFragment.class.getSimpleName();
 
-    private ProgressBar progressBar;
-    private GeneralRecyclerViewAdapter recyclerAdapter;
+    protected ProgressBar progressBar;
+    protected GeneralRecyclerViewAdapter recyclerAdapter;
 
-    private FilterOptions filterOptions;
-    private SortOptions sortOptions;
-    private AppCompatSpinner spinnerFilter;
-    private AppCompatSpinner spinnerSort;
+    protected FilterOptions filterOptions;
+    protected SortOptions sortOptions;
+    protected AppCompatSpinner spinnerFilter;
+    protected AppCompatSpinner spinnerSort;
 
-    private SearchView searchView;
+    protected SearchView searchView;
 
-    private FusedLocationProviderClient fusedLocationClient;
+    protected FusedLocationProviderClient fusedLocationClient;
+
+    protected View specificListLayout;
+    protected View specificRecyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG,"INSIDE ON CREATE VIEW GENERAL");
+        View root = inflater.inflate(R.layout.general_list_fragment, container, false);
+
+        LinearLayout listViewContainer = root.findViewById(R.id.frag_genlist_recycler_view_container);
+
+        specificListLayout = createSpecificListLayout();
+        listViewContainer.addView(specificListLayout);
+
+        progressBar = root.findViewById(R.id.frag_genlist_progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
+        spinnerFilter = root.findViewById(R.id.frag_genlist_filter_opts);
+        spinnerSort = root.findViewById(R.id.frag_genlist_sort_option);
         spinnerFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -76,10 +95,15 @@ public abstract class GeneralListFragment extends Fragment {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
         setHasOptionsMenu(true);
 
-        return new View(getContext());
+        initializeFilterAndSortOptions();
+        specificRecyclerView = createSpecificRecyclerView();
+        popolateSpecificRecyclerView();
+        return root;
     }
 
-    private void initializeRecyclerAdapter(List<MyItem> items) {
+
+
+    protected void initializeRecyclerAdapter(List<MyItem> items) {
         if(recyclerAdapter != null) {
             String selected = spinnerFilter.getSelectedItem().toString();
             recyclerAdapter.onFilterOptSelected(filterOptions.valueOf(selected.toUpperCase()), searchView.getQuery().toString());
@@ -88,7 +112,7 @@ public abstract class GeneralListFragment extends Fragment {
             selected = selected.toUpperCase().replace("(","")
                     .replace(")","").replace(".","").replace(" ", "_");
             final String opt = sortOptions.valueOf(selected);
-            if(opt.equals(PubsListFragment.SortOptions.CLOSEST_TO_FARTHEST) || opt.equals(PubsListFragment.SortOptions.FARTHEST_TO_CLOSEST)){
+            if(opt.equals(SortOptions.CLOSEST_TO_FARTHEST) || opt.equals(SortOptions.FARTHEST_TO_CLOSEST)){
                 onSortProximity(opt);
             }else{
                 recyclerAdapter.onSortOptSelected(opt,null);
@@ -157,7 +181,7 @@ public abstract class GeneralListFragment extends Fragment {
         }
     }
 
-    private void onSortProximity(final String opt){
+    protected void onSortProximity(final String opt){
         if (ActivityCompat.checkSelfPermission(this.getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -184,4 +208,12 @@ public abstract class GeneralListFragment extends Fragment {
                     }
                 });
     }
+
+    protected abstract void initializeFilterAndSortOptions();
+
+    protected abstract View createSpecificListLayout();
+
+    protected abstract View createSpecificRecyclerView();
+
+    protected abstract void popolateSpecificRecyclerView();
 }

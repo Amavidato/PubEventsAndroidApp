@@ -17,5 +17,5 @@ public abstract class MyItem {
         return  new Gson().toJson(this);
     }
 
-    public abstract ModelObj decodeStrToObj(String obj);
+    public abstract MyItem decodeStrToObj(String obj);
 }

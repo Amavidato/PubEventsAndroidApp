@@ -18,6 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amavidato.pubevents.R;
+import com.amavidato.pubevents.model.Pub;
+import com.amavidato.pubevents.utility.general_list_fragment.GeneralRecyclerViewAdapter;
+import com.amavidato.pubevents.utility.general_list_fragment.GeneralViewHolder;
+import com.amavidato.pubevents.utility.general_list_fragment.MyItem;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
@@ -26,86 +30,53 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class PubListRecyclerViewAdapter extends RecyclerView.Adapter<PubListRecyclerViewAdapter.ViewHolder> implements Filterable {
+public class PubListRecyclerViewAdapter extends GeneralRecyclerViewAdapter {
     private static final String TAG = PubListRecyclerViewAdapter.class.getSimpleName();
 
-    private final List<PubItem> allPubs;
-    private final List<PubItem> pubsToShow;
-    private final Activity mActivity;
-    private String currentFilterString;
-    private Location lastKnownLoc;
-    private PubsListFragment.FilterOptions selectedFilterOpt = PubsListFragment.FilterOptions.values()[0];
-    private PubsListFragment.SortOptions selectedSortOpt = PubsListFragment.SortOptions.values()[0];
-
-
-
-    private Filter filter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence charSequence) {
-            Log.d(TAG, "PERFORM FILTERING:"+charSequence);
-            List<PubItem> filtered = new ArrayList<>();
-            currentFilterString = charSequence.toString();
-            if(currentFilterString.isEmpty()){
-                filtered.addAll(allPubs);
-            }else{
-                for(PubItem item : allPubs){
-                    String lc = currentFilterString.toLowerCase();
-                    switch (selectedFilterOpt){
-                        case NAME:
-                            if(item.pub.getName().toLowerCase().contains(lc)){
-                                filtered.add(item);
-                            }
-                            break;
-                        case CITY:
-                            if(item.pub.getCity().toLowerCase().contains(lc)){
-                                filtered.add(item);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filtered;
-            return filterResults;
-        }
-
-        @Override
-        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            pubsToShow.clear();
-            pubsToShow.addAll((Collection<? extends PubItem>) filterResults.values);
-            Log.d("PUBLISH FILTER","results:ALL"+allPubs+"\nTO SHOW"+pubsToShow);
-            //filter.filter(currentFilterString);
-            onSortOptSelected(selectedSortOpt,lastKnownLoc);
-            notifyDataSetChanged();
-        }
-    };
-
-    public PubListRecyclerViewAdapter(List<PubItem> items, Activity activity) {
-        pubsToShow =  items;
-        allPubs = new ArrayList<>(items);
-        mActivity = activity;
+    public PubListRecyclerViewAdapter(List<MyItem> items, Activity activity) {
+        super(items, activity);
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    protected void searchForFilteringResults(List<MyItem> filtered, MyItem item, String selectedFilterOpt, String lc) {
+        Pub pub = (Pub) item.object;
+        switch (selectedFilterOpt){
+            case FilterOptionsPub.NAME:
+                if(pub.getName().toLowerCase().contains(lc)){
+                    filtered.add(item);
+                }
+                break;
+            case FilterOptionsPub.CITY:
+                if(pub.getCity().toLowerCase().contains(lc)){
+                    filtered.add(item);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    protected GeneralViewHolder customOnCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.pub_item, parent, false);
-        return new ViewHolder(view);
+        return new PubViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = pubsToShow.get(position);
-        holder.mImgView.setImageResource(R.drawable.ic_menu_gallery);
-        holder.mNameView.setText(pubsToShow.get(position).pub.getName());
-        holder.mCityView.setText(pubsToShow.get(position).pub.getCity());
+    protected void customOnBindViewHolder(final GeneralViewHolder holder, int position) {
+        final PubViewHolder tmp = (PubViewHolder) holder;
+        PubItem item = (PubItem) toShow.get(position);
+        Pub pub = (Pub) item.object;
+        tmp.mItem = item;
+        tmp.mImgView.setImageResource(R.drawable.ic_menu_gallery);
+        tmp.mNameView.setText(pub.getName());
+        tmp.mCityView.setText(pub.getCity());
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        tmp.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PubsListFragmentDirections.ActionOpenPubPage action = PubsListFragmentDirections.actionOpenPubPage(holder.mItem.id);
+                PubsListFragmentDirections.ActionOpenPubPage action = PubsListFragmentDirections.actionOpenPubPage(tmp.mItem.id);
                 View navController = mActivity.findViewById(R.id.nav_host_fragment);
                 Navigation.findNavController(navController).navigate(action);
             }
@@ -113,103 +84,89 @@ public class PubListRecyclerViewAdapter extends RecyclerView.Adapter<PubListRecy
     }
 
     @Override
-    public int getItemCount() {
-        return pubsToShow.size();
-    }
-
-
-    @Override
-    public Filter getFilter() {
-        return filter;
-    }
-
-    public void onFilterOptSelected(PubsListFragment.FilterOptions opt, String s){
-        selectedFilterOpt = opt;
-        filter.filter(s);
-    }
-
-    public boolean onSortOptSelected(PubsListFragment.SortOptions opt, Location currentLoc){
-        selectedSortOpt = opt;
+    protected boolean customOnSortOptSelected(String opt, Location currentLoc, Location lastKnownLoc) {
         switch (opt){
-            case NAME_ASC:
-                Collections.sort(pubsToShow, new Comparator<PubItem>() {
+            case SortOptionsPub.NAME_ASC:
+                Collections.sort(toShow, new Comparator<MyItem>() {
                     @Override
-                    public int compare(PubItem pubItem, PubItem t1) {
-                        return pubItem.pub.getName().compareToIgnoreCase(t1.pub.getName());
+                    public int compare(MyItem pubItem, MyItem t1) {
+                        return ((Pub)pubItem.object).getName().compareToIgnoreCase(((Pub)t1.object).getName());
                     }
                 });
 
                 break;
-            case NAME_DESC:
-                Collections.sort(pubsToShow, new Comparator<PubItem>() {
+            case SortOptionsPub.NAME_DESC:
+                Collections.sort(toShow, new Comparator<MyItem>() {
                     @Override
-                    public int compare(PubItem pubItem, PubItem t1) {
-                        return t1.pub.getName().compareToIgnoreCase(pubItem.pub.getName());
+                    public int compare(MyItem pubItem, MyItem t1) {
+                        return ((Pub)t1.object).getName().compareToIgnoreCase(((Pub)pubItem.object).getName());
                     }
                 });
                 break;
-            case CITY_NAME_ASC:
-                Collections.sort(pubsToShow, new Comparator<PubItem>() {
+            case SortOptionsPub.CITY_NAME_ASC:
+                Collections.sort(toShow, new Comparator<MyItem>() {
                     @Override
-                    public int compare(PubItem pubItem, PubItem t1) {
-                        return pubItem.pub.getCity().compareToIgnoreCase(t1.pub.getCity());
+                    public int compare(MyItem pubItem, MyItem t1) {
+                        return ((Pub)pubItem.object).getCity().compareToIgnoreCase(((Pub)t1.object).getCity());
                     }
                 });
                 break;
-            case CITY_NAME_DESC:
-                Collections.sort(pubsToShow, new Comparator<PubItem>() {
+            case SortOptionsPub.CITY_NAME_DESC:
+                Collections.sort(toShow, new Comparator<MyItem>() {
                     @Override
-                    public int compare(PubItem pubItem, PubItem t1) {
-                        return t1.pub.getCity().compareToIgnoreCase(pubItem.pub.getCity());
+                    public int compare(MyItem pubItem, MyItem t1) {
+                        return ((Pub)t1.object).getCity().compareToIgnoreCase(((Pub)pubItem.object).getCity());
                     }
                 });
                 break;
-            case CLOSEST_TO_FARTHEST:
+            case SortOptionsPub.CLOSEST_TO_FARTHEST:
                 if(currentLoc != null) {
                     lastKnownLoc = currentLoc;
                 }
                 if(lastKnownLoc != null){
-                    Collections.sort(pubsToShow, new Comparator<PubItem>() {
+                    final Location finalLastKnownLoc = lastKnownLoc;
+                    Collections.sort(toShow, new Comparator<MyItem>() {
                         @Override
-                        public int compare(PubItem pubItem, PubItem t1) {
+                        public int compare(MyItem pubItem, MyItem t1) {
                             Location pubItemLoc = new Location("");
                             Location t1Loc = new Location("");
 
-                            GeoPoint tmp = pubItem.pub.getGeoLocation();
+                            GeoPoint tmp = ((Pub)pubItem.object).getGeoLocation();
                             pubItemLoc.setLatitude(tmp.getLatitude());
                             pubItemLoc.setLongitude(tmp.getLongitude());
 
-                            tmp = t1.pub.getGeoLocation();
+                            tmp = ((Pub)t1.object).getGeoLocation();
                             t1Loc.setLatitude(tmp.getLatitude());
                             t1Loc.setLongitude(tmp.getLongitude());
 
-                            return ((Float)pubItemLoc.distanceTo(lastKnownLoc)).compareTo(t1Loc.distanceTo(lastKnownLoc));
+                            return ((Float)pubItemLoc.distanceTo(finalLastKnownLoc)).compareTo(t1Loc.distanceTo(finalLastKnownLoc));
                         }
                     });
                 }else{
                     return false;
                 }
                 break;
-            case FARTHEST_TO_CLOSEST:
+            case SortOptionsPub.FARTHEST_TO_CLOSEST:
                 if(currentLoc != null) {
                     lastKnownLoc = currentLoc;
                 }
                 if(lastKnownLoc != null){
-                    Collections.sort(pubsToShow, new Comparator<PubItem>() {
+                    final Location finalLastKnownLoc1 = lastKnownLoc;
+                    Collections.sort(toShow, new Comparator<MyItem>() {
                         @Override
-                        public int compare(PubItem pubItem, PubItem t1) {
+                        public int compare(MyItem pubItem, MyItem t1) {
                             Location pubItemLoc = new Location("");
                             Location t1Loc = new Location("");
 
-                            GeoPoint tmp = pubItem.pub.getGeoLocation();
+                            GeoPoint tmp = ((Pub)pubItem.object).getGeoLocation();
                             pubItemLoc.setLatitude(tmp.getLatitude());
                             pubItemLoc.setLongitude(tmp.getLongitude());
 
-                            tmp = t1.pub.getGeoLocation();
+                            tmp = ((Pub)t1.object).getGeoLocation();
                             t1Loc.setLatitude(tmp.getLatitude());
                             t1Loc.setLongitude(tmp.getLongitude());
 
-                            return ((Float)t1Loc.distanceTo(lastKnownLoc)).compareTo(pubItemLoc.distanceTo(lastKnownLoc));
+                            return ((Float)t1Loc.distanceTo(finalLastKnownLoc1)).compareTo(pubItemLoc.distanceTo(finalLastKnownLoc1));
                         }
                     });
                 }else{
@@ -217,51 +174,51 @@ public class PubListRecyclerViewAdapter extends RecyclerView.Adapter<PubListRecy
                 }
 
                 break;
-            case OVERALL_RATE_ASC:
-                Collections.sort(pubsToShow, new Comparator<PubItem>() {
+            case SortOptionsPub.OVERALL_RATE_ASC:
+                Collections.sort(toShow, new Comparator<MyItem>() {
                     @Override
-                    public int compare(PubItem pubItem, PubItem t1) {
-                        return ((Double)pubItem.pub.getOverallRating()).compareTo(t1.pub.getOverallRating());
+                    public int compare(MyItem pubItem, MyItem t1) {
+                        return ((Double)((Pub)pubItem.object).getOverallRating()).compareTo(((Pub)t1.object).getOverallRating());
                     }
                 });
                 break;
-            case OVERALL_RATE_DESC:
-                Collections.sort(pubsToShow, new Comparator<PubItem>() {
+            case SortOptionsPub.OVERALL_RATE_DESC:
+                Collections.sort(toShow, new Comparator<MyItem>() {
                     @Override
-                    public int compare(PubItem pubItem, PubItem t1) {
-                        return ((Double)t1.pub.getOverallRating()).compareTo(pubItem.pub.getOverallRating());
+                    public int compare(MyItem pubItem, MyItem t1) {
+                        return ((Double)((Pub)t1.object).getOverallRating()).compareTo(((Pub)pubItem.object).getOverallRating());
                     }
                 });
                 break;
-            case PRICE_ASC:
-                Collections.sort(pubsToShow, new Comparator<PubItem>() {
+            case SortOptionsPub.PRICE_ASC:
+                Collections.sort(toShow, new Comparator<MyItem>() {
                     @Override
-                    public int compare(PubItem pubItem, PubItem t1) {
-                        return t1.pub.getPrice().compareTo(pubItem.pub.getPrice());
+                    public int compare(MyItem pubItem, MyItem t1) {
+                        return ((Pub)t1.object).getPrice().compareTo(((Pub)pubItem.object).getPrice());
                     }
                 });
                 break;
-            case PRICE_DESC:
-                Collections.sort(pubsToShow, new Comparator<PubItem>() {
+            case SortOptionsPub.PRICE_DESC:
+                Collections.sort(toShow, new Comparator<MyItem>() {
                     @Override
-                    public int compare(PubItem pubItem, PubItem t1) {
-                        return pubItem.pub.getPrice().compareTo(t1.pub.getPrice());
+                    public int compare(MyItem pubItem, MyItem t1) {
+                        return ((Pub)pubItem.object).getPrice().compareTo(((Pub)t1.object).getPrice());
                     }
                 });
                 break;
-            case AVG_AGE_ASC:
-                Collections.sort(pubsToShow, new Comparator<PubItem>() {
+            case SortOptionsPub.AVG_AGE_ASC:
+                Collections.sort(toShow, new Comparator<MyItem>() {
                     @Override
-                    public int compare(PubItem pubItem, PubItem t1) {
-                        return ((Integer)pubItem.pub.getAverageAge()).compareTo(t1.pub.getAverageAge());
+                    public int compare(MyItem pubItem, MyItem t1) {
+                        return ((Integer)((Pub)pubItem.object).getAverageAge()).compareTo(((Pub)t1.object).getAverageAge());
                     }
                 });
                 break;
-            case AVG_AGE_DESC:
-                Collections.sort(pubsToShow, new Comparator<PubItem>() {
+            case SortOptionsPub.AVG_AGE_DESC:
+                Collections.sort(toShow, new Comparator<MyItem>() {
                     @Override
-                    public int compare(PubItem pubItem, PubItem t1) {
-                        return ((Integer)t1.pub.getAverageAge()).compareTo(pubItem.pub.getAverageAge());
+                    public int compare(MyItem pubItem, MyItem t1) {
+                        return ((Integer)((Pub)t1.object).getAverageAge()).compareTo(((Pub)pubItem.object).getAverageAge());
                     }
                 });
                 break;
@@ -270,38 +227,4 @@ public class PubListRecyclerViewAdapter extends RecyclerView.Adapter<PubListRecy
         }
         return true;
     }
-
-    public List<PubItem> getPubsToShow() {
-        return pubsToShow;
-    }
-
-    public String getCurrentFilterString() {
-        return currentFilterString;
-    }
-
-    public void setCurrentFilterString(String currentFilterString) {
-        this.currentFilterString = currentFilterString;
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final ImageView mImgView;
-        public final GridLayout mContentView;
-        public final TextView mNameView;
-        public final TextView mCityView;
-
-        public PubItem mItem;
-
-        public ViewHolder(View view) {
-            super(view);
-            mView = view;
-            mImgView = (ImageView) view.findViewById(R.id.pub_item_image);
-            mContentView = view.findViewById(R.id.pub_item_content);
-            mNameView = view.findViewById(R.id.pub_item_name);
-            mCityView = view.findViewById(R.id.pub_item_city);
-        }
-
-    }
-
-
 }

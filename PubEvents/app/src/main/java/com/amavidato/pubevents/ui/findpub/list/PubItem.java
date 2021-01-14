@@ -1,19 +1,14 @@
 package com.amavidato.pubevents.ui.findpub.list;
 
+import com.amavidato.pubevents.model.ModelObj;
 import com.amavidato.pubevents.model.Pub;
+import com.amavidato.pubevents.utility.general_list_fragment.MyItem;
 import com.google.gson.Gson;
 
-public class PubItem {
-    public final String id;
-    public final Pub pub;
+public class PubItem extends MyItem {
 
-    /*public PubItem(Pub pub) {
-        //this.id = id;
-        this.pub = pub;
-    }*/
     public PubItem(String id,Pub pub) {
-        this.id = id;
-        this.pub = pub;
+        super(id,pub);
     }
 
     @Override
@@ -21,7 +16,7 @@ public class PubItem {
         return new Gson().toJson(this);
     }
 
-    public static PubItem decodeStrToObj(String obj){
+    public MyItem decodeStrToObj(String obj){
         return new Gson().fromJson(obj, PubItem.class);
     }
 

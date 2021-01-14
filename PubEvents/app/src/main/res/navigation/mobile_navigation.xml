@@ -45,7 +45,7 @@
         android:id="@+id/pubsListFragment"
         android:name="com.amavidato.pubevents.ui.findpub.list.PubsListFragment"
         android:label="PubsListFragment"
-        android:layout="@layout/fragment_publist">
+        android:layout="@layout/general_list_fragment">
 
         <action
             android:id="@+id/action_open_pub_page"
