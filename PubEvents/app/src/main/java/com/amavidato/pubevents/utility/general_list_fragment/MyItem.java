@@ -1,4 +1,21 @@
 package com.amavidato.pubevents.utility.general_list_fragment;
 
-public class MyItem {
+import com.amavidato.pubevents.model.ModelObj;
+import com.google.gson.Gson;
+
+public abstract class MyItem {
+    public final String id;
+    public final ModelObj object;
+
+    public MyItem(String id, ModelObj object) {
+        this.id = id;
+        this.object = object;
+    }
+
+    @Override
+    public String toString() {
+        return  new Gson().toJson(this);
+    }
+
+    public abstract ModelObj decodeStrToObj(String obj);
 }

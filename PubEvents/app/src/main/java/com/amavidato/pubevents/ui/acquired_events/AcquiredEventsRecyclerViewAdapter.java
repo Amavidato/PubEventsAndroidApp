@@ -101,6 +101,13 @@ public class AcquiredEventsRecyclerViewAdapter extends RecyclerView.Adapter<Acqu
     @Override
     public Filter getFilter() { return filter; }
 
+
+
+    public void onFilterOptSelected(AcquiredEventsFragment.FilterOptions opt, String s){
+        selectedFilterOpt = opt;
+        filter.filter(s);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final ImageView mImgView;
@@ -119,10 +126,5 @@ public class AcquiredEventsRecyclerViewAdapter extends RecyclerView.Adapter<Acqu
             mPubNameView = view.findViewById(R.id.event_item_pub);
         }
 
-    }
-
-    public void onFilterOptSelected(AcquiredEventsFragment.FilterOptions opt, String s){
-        selectedFilterOpt = opt;
-        filter.filter(s);
     }
 }

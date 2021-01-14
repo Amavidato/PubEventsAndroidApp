@@ -2,7 +2,7 @@ package com.amavidato.pubevents.model;
 
 import java.util.Date;
 
-public class Event {
+public class Event implements ModelObj {
     private String name;
     private Date date;
     private String pub;

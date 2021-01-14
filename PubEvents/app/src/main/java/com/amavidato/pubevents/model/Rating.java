@@ -3,7 +3,7 @@ package com.amavidato.pubevents.model;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.gson.Gson;
 
-public class Rating {
+public class Rating implements ModelObj{
     private String user;
     private String email;
     private int value;

@@ -4,7 +4,7 @@ import com.amavidato.pubevents.ui.findpub.list.PubItem;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.gson.Gson;
 
-public class Pub {
+public class Pub implements ModelObj{
     private String name;
     private GeoPoint geoLocation;
     private String city;

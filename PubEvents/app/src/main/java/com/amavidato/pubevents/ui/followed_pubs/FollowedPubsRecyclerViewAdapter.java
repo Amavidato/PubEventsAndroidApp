@@ -124,25 +124,7 @@ public class FollowedPubsRecyclerViewAdapter extends RecyclerView.Adapter<Follow
     @Override
     public Filter getFilter() { return filter; }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final ImageView mImgView;
-        public final GridLayout mContentView;
-        public final TextView mNameView;
-        public final TextView mCityView;
 
-        public PubItem mItem;
-
-        public ViewHolder(View view) {
-            super(view);
-            mView = view;
-            mImgView = (ImageView) view.findViewById(R.id.pub_item_image);
-            mContentView = view.findViewById(R.id.pub_item_content);
-            mNameView = view.findViewById(R.id.pub_item_name);
-            mCityView = view.findViewById(R.id.pub_item_city);
-        }
-
-    }
 
     public void onFilterOptSelected(PubsListFragment.FilterOptions opt, String s){
         selectedFilterOpt = opt;
@@ -302,5 +284,25 @@ public class FollowedPubsRecyclerViewAdapter extends RecyclerView.Adapter<Follow
 
     public void setCurrentFilterString(String currentFilterString) {
         this.currentFilterString = currentFilterString;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public final View mView;
+        public final ImageView mImgView;
+        public final GridLayout mContentView;
+        public final TextView mNameView;
+        public final TextView mCityView;
+
+        public PubItem mItem;
+
+        public ViewHolder(View view) {
+            super(view);
+            mView = view;
+            mImgView = (ImageView) view.findViewById(R.id.pub_item_image);
+            mContentView = view.findViewById(R.id.pub_item_content);
+            mNameView = view.findViewById(R.id.pub_item_name);
+            mCityView = view.findViewById(R.id.pub_item_city);
+        }
+
     }
 }
