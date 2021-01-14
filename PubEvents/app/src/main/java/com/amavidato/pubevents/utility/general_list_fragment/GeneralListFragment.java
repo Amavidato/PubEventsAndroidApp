@@ -158,6 +158,22 @@ public abstract class GeneralListFragment extends Fragment {
             }
         });
 
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                searchView.setQuery("",true);
+                recyclerAdapter.setCurrentFilterString("");
+                recyclerAdapter.getFilter().filter("");
+                return true;
+            }
+        });
+
         if (recyclerAdapter != null && recyclerAdapter.getCurrentFilterString() != null && !recyclerAdapter.getCurrentFilterString().isEmpty()) {
             searchView.setQuery(recyclerAdapter.getCurrentFilterString(), false);
             searchItem.expandActionView();

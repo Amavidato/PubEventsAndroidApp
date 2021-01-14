@@ -337,8 +337,9 @@ public class FindPubsFragment extends MyFragment implements OnMapReadyCallback, 
         searchItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
+                FindPubsFragmentDirections.ActionFindPubToPubsList action = FindPubsFragmentDirections.actionFindPubToPubsList(false);
                 View navController = getActivity().findViewById(R.id.nav_host_fragment);
-                Navigation.findNavController(navController).navigate(R.id.action_find_pub_to_pubsList);
+                Navigation.findNavController(navController).navigate(action);
                 return false;
             }
         });

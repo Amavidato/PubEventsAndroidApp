@@ -90,6 +90,7 @@ public abstract class GeneralRecyclerViewAdapter extends RecyclerView.Adapter<Ge
 
     public boolean onSortOptSelected(String opt, Location currentLoc){
         selectedSortOpt = opt;
+
         return customOnSortOptSelected(opt,currentLoc,lastKnownLoc);
     }
 

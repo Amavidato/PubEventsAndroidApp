@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatSpinner;
@@ -34,6 +35,7 @@ import android.widget.Toast;
 
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Pub;
+import com.amavidato.pubevents.ui.pub.PubFragmentArgs;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.general_list_fragment.GeneralListFragment;
 import com.amavidato.pubevents.utility.general_list_fragment.MyItem;
@@ -43,6 +45,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
@@ -56,6 +59,7 @@ import java.util.Map;
 public class PubsListFragment extends GeneralListFragment {
 
     private static final String TAG = PubsListFragment.class.getSimpleName();
+    private boolean openFollowedPubsList;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -63,6 +67,14 @@ public class PubsListFragment extends GeneralListFragment {
     public PubsListFragment() {
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        openFollowedPubsList = PubsListFragmentArgs.fromBundle(getArguments()).getStringOpenFollowedPubsList();
+        View view = super.onCreateView(inflater,container,savedInstanceState);
+        Log.d(TAG, "OPEN FPL: "+openFollowedPubsList);
+        return view;
+    }
     @Override
     protected void initializeFilterAndSortOptions() {
         filterOptions = new FilterOptionsPub();
@@ -89,71 +101,111 @@ public class PubsListFragment extends GeneralListFragment {
 
     @Override
     protected void popolateSpecificRecyclerView() {
-        // Set the adapter
+
+        String path = "";
         if (specificRecyclerView instanceof RecyclerView) {
+            progressBar.setVisibility(View.VISIBLE);
             final Context context = specificRecyclerView.getContext();
             final RecyclerView recyclerView = (RecyclerView) specificRecyclerView;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
+            DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(),DividerItemDecoration.VERTICAL);
             recyclerView.addItemDecoration(divider);
-            final List<MyItem> pubs = new ArrayList<>();
-            //Query to retrieve pubs information
-            FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.PUBS)
-                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @RequiresApi(api = Build.VERSION_CODES.N)
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        final int numPubs = task.getResult().size();
-                        final int[] pubsDone = {0};
-                        for (final QueryDocumentSnapshot document : task.getResult()) {
-                            final Pub pub = new Pub();
-                            final String pubID = document.getId();
-                            Map<String, Object> data = document.getData();
-                            Log.d(TAG, document.getId() + " => " + data);
 
-                            pub.setName((String) data.get(DBManager.CollectionsPaths.PubFields.NAME));
-                            pub.setGeoLocation((GeoPoint) data.get(DBManager.CollectionsPaths.PubFields.GEOLOCATION));
-                            pub.setAverageAge(((Long) data.get(DBManager.CollectionsPaths.PubFields.AVG_AGE)).intValue());
-                            pub.setPrice(Pub.Price.valueOf(((String) data.get(DBManager.CollectionsPaths.PubFields.PRICE)).toUpperCase()));
-                            Object ratingTemp = data.get(DBManager.CollectionsPaths.PubFields.OVERALL_RATING);
-                            if (ratingTemp instanceof Double) {
-                                pub.setOverallRating((Double) ratingTemp);
-                            } else if (ratingTemp instanceof Long) {
-                                pub.setOverallRating(((Long) ratingTemp).doubleValue());
-                            }
-                            final String cityID = (String) data.get(DBManager.CollectionsPaths.PubFields.CITY);
-                            //Nested query to retrieve city's information
-                            FirebaseFirestore.getInstance().document(DBManager.CollectionsPaths.CITY + "/" + cityID)
-                                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        Map<String, Object> data = task.getResult().getData();
-                                        Log.d(TAG + "--CITy", task.getResult().getId() + " => " + data);
-                                        pub.setCity((String) data.get(DBManager.CollectionsPaths.CityFields.NAME));
-                                        pubs.add(new PubItem(pubID, pub));
-                                        pubsDone[0]++;
-                                        if (pubsDone[0] == numPubs) {
-                                            recyclerAdapter = new PubListRecyclerViewAdapter(pubs, getActivity());
-                                            recyclerView.setAdapter(recyclerAdapter);
-                                            initializeRecyclerAdapter(pubs);
-                                        }
-                                    } else {
-                                        Log.d(TAG, "Error getting documents: ", task.getException());
-                                        pub.setCity("ERROR");
+            if(openFollowedPubsList){
+                //Query to retrieve pubs information
+                String uid = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                if(uid!=null) {
+                    path = DBManager.CollectionsPaths.USERS + "/" + uid + "/" + DBManager.CollectionsPaths.UserFields.FOLLOWED_PUBS;
+                }else {
+                    return;
+                }
+            } else{
+                path = DBManager.CollectionsPaths.PUBS;
+            }
+            FirebaseFirestore.getInstance().collection(path)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                final List<MyItem> pubs = new ArrayList<>();
+                                final int numPubs = task.getResult().size();
+                                final int[] pubsDone = {0};
+                                for (final DocumentSnapshot document : task.getResult()) {
+                                    final String pubID = document.getId();
+                                    final Pub pub = new Pub();
+                                    if(openFollowedPubsList) {
+                                        fillWithFollowedPubs(pubID, pub, document, pubs, pubsDone,numPubs,recyclerView);
+                                    }else {
+                                        fillPubValues(pubID, pub, document, pubs, pubsDone,numPubs,recyclerView);
                                     }
                                 }
-                            });
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                                Toast.makeText(context, "Error getting pub list from database.\n Please check your connection and try again.", Toast.LENGTH_LONG).show();
+                            }
+                            progressBar.setVisibility(View.INVISIBLE);
                         }
-                    } else {
-                        Log.d(TAG, "Error getting documents: ", task.getException());
-                        Toast.makeText(context, "Error getting pub list from database.\n Please check your connection and try again.", Toast.LENGTH_LONG).show();
+                    });
+            }
+    }
+
+    private void fillWithFollowedPubs(final String pubID, final Pub pub, final DocumentSnapshot document, final List<MyItem> pubs, final int[] pubsDone, final int numPubs, final RecyclerView recyclerView) {
+        FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.PUBS)
+                .document(pubID)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            fillPubValues(pubID, pub, task.getResult(), pubs, pubsDone,numPubs,recyclerView);
+                        } else {
+                            Log.d(TAG, "ERROR");
+                        }
                     }
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-            });
+                });
+    }
+
+    private void fillPubValues(final String pubID, final Pub pub, DocumentSnapshot document, final List<MyItem> pubs, final int[] pubsDone, final int numPubs, final RecyclerView recyclerView) {
+        Map<String, Object> data = document.getData();
+        Log.d(TAG, document.getId() + " => " + data);
+
+        pub.setName((String) data.get(DBManager.CollectionsPaths.PubFields.NAME));
+        pub.setGeoLocation((GeoPoint) data.get(DBManager.CollectionsPaths.PubFields.GEOLOCATION));
+        pub.setAverageAge(((Long) data.get(DBManager.CollectionsPaths.PubFields.AVG_AGE)).intValue());
+        pub.setPrice(Pub.Price.valueOf(((String) data.get(DBManager.CollectionsPaths.PubFields.PRICE)).toUpperCase()));
+        Object ratingTemp = data.get(DBManager.CollectionsPaths.PubFields.OVERALL_RATING);
+        if (ratingTemp instanceof Double) {
+            pub.setOverallRating((Double) ratingTemp);
+        } else if (ratingTemp instanceof Long) {
+            pub.setOverallRating(((Long) ratingTemp).doubleValue());
         }
+        final String cityID = (String) data.get(DBManager.CollectionsPaths.PubFields.CITY);
+        //Nested query to retrieve city's information
+        FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.CITY)
+                .document(cityID)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            Map<String, Object> data = task.getResult().getData();
+                            Log.d(TAG + "--CITy", task.getResult().getId() + " => " + data);
+                            pub.setCity((String) data.get(DBManager.CollectionsPaths.CityFields.NAME));
+                            pubs.add(new PubItem(pubID, pub));
+                            pubsDone[0]++;
+                            if (pubsDone[0] == numPubs) {
+                                recyclerAdapter = new PubListRecyclerViewAdapter(pubs, getActivity());
+                                recyclerView.setAdapter(recyclerAdapter);
+                                initializeRecyclerAdapter(pubs);
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            pub.setCity("ERROR");
+                        }
+                    }
+                });
     }
 }
