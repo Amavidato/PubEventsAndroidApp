@@ -83,6 +83,10 @@
         android:name="com.amavidato.pubevents.ui.events.list.EventListFragment"
         android:label="@string/menu_acquired_events"
         tools:layout="@layout/general_list_fragment">
+        <argument
+            android:name="@string/open_user_dependent_list"
+            app:argType="boolean"
+            android:defaultValue="true"/>
         <action
             android:id="@+id/action_open_eventFragment"
             app:destination="@id/eventFragment" />

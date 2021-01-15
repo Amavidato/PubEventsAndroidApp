@@ -9,7 +9,7 @@ public class Event implements ModelObj {
     private double price;
     private int max_capacity;
     private int reserved_seats;
-    public enum EventType { NONE, QUIZ, MOVIE_NIGHT, LIVE_MUSIC, KARAOKE, SPEED_DATING}
+    public enum EventType { NONE, QUIZ, MOVIE_NIGHT, LIVE_MUSIC, KARAOKE, SPEED_DATING, NULL}
     private EventType type;
 
     public Event() {
@@ -56,8 +56,8 @@ public class Event implements ModelObj {
         return price;
     }
 
-    public void setPrice(double price) {
-        if(price>=0){
+    public void setPrice(Double price) {
+        if(price != null && price>=0){
             this.price = price;
         }
     }
@@ -66,8 +66,8 @@ public class Event implements ModelObj {
         return max_capacity;
     }
 
-    public void setMax_capacity(int max_capacity) {
-        if(max_capacity>=0){
+    public void setMax_capacity(Integer max_capacity) {
+        if(max_capacity != null && max_capacity>=0){
             this.max_capacity = max_capacity;
         }
     }
@@ -76,8 +76,8 @@ public class Event implements ModelObj {
         return reserved_seats;
     }
 
-    public void setReserved_seats(int reserved_seats) {
-        if(reserved_seats<=max_capacity){
+    public void setReserved_seats(Integer reserved_seats) {
+        if(reserved_seats != null && reserved_seats<=max_capacity){
             this.reserved_seats = reserved_seats;
         }
     }

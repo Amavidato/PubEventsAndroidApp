@@ -26,6 +26,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -308,51 +309,17 @@ public abstract class GeneralListFragment extends Fragment {
     }
 
     protected abstract void fillModelObjectValues(final DocumentSnapshot document, final List<MyItem> items, final int[] itemsDone, final int numItems, final RecyclerView recyclerView);
-    /*{
-        final Pub pub = new Pub();
-        Map<String, Object> data = document.getData();
-        Log.d(TAG, document.getId() + " => " + data);
-
-        pub.setName((String) data.get(DBManager.CollectionsPaths.PubFields.NAME));
-        pub.setGeoLocation((GeoPoint) data.get(DBManager.CollectionsPaths.PubFields.GEOLOCATION));
-        pub.setAverageAge(((Long) data.get(DBManager.CollectionsPaths.PubFields.AVG_AGE)).intValue());
-        pub.setPrice(Pub.Price.valueOf(((String) data.get(DBManager.CollectionsPaths.PubFields.PRICE)).toUpperCase()));
-        Object ratingTemp = data.get(DBManager.CollectionsPaths.PubFields.OVERALL_RATING);
-        if (ratingTemp instanceof Double) {
-            pub.setOverallRating((Double) ratingTemp);
-        } else if (ratingTemp instanceof Long) {
-            pub.setOverallRating(((Long) ratingTemp).doubleValue());
-        }
-        final String cityID = (String) data.get(DBManager.CollectionsPaths.PubFields.CITY);
-        //Nested query to retrieve city's information
-        FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.CITY)
-                .document(cityID)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            Map<String, Object> data = task.getResult().getData();
-                            Log.d(TAG + "--CITy", task.getResult().getId() + " => " + data);
-                            pub.setCity((String) data.get(DBManager.CollectionsPaths.CityFields.NAME));
-                            addItemToList(items,new PubItem(document.getId(),pub),itemsDone,numItems,recyclerView);
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                            pub.setCity("ERROR");
-                        }
-                    }
-                });
-    }*/
 
     protected void addItemToList(List<MyItem> items, MyItem itemToAdd, int[] itemsDone, int numItems, RecyclerView recyclerView){
         items.add(itemToAdd);
         itemsDone[0]++;
         if (itemsDone[0] == numItems) {
-            recyclerAdapter = new PubListRecyclerViewAdapter(items, getActivity());
+            recyclerAdapter = getConcreteRecyclerViewAdapter(items,getActivity());
             recyclerView.setAdapter(recyclerAdapter);
             initializeRecyclerAdapter(items);
         }
     }
+
     private void makeUserDependentQuery(final DocumentSnapshot document, final List<MyItem> items, final int[] itemsDone, final int numItems, final RecyclerView recyclerView) {
         final String itemID = document.getId();
         FirebaseFirestore.getInstance().document(getGeneralPathQueryList()+"/"+itemID)
@@ -370,6 +337,8 @@ public abstract class GeneralListFragment extends Fragment {
     }
 
     protected abstract boolean getUserDependedListFragArgument();
+
     protected abstract String getGeneralPathQueryList();
     protected abstract String getUserDependedPathQueryList(String uid);
+    protected abstract GeneralRecyclerViewAdapter getConcreteRecyclerViewAdapter(List<MyItem> items, FragmentActivity activity);
 }

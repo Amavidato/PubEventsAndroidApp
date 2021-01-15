@@ -220,9 +220,7 @@ public class EventFragment extends MyFragment {
 
     private void refreshFragment(){
         Log.d("EventFragment","Refreshing fragment");
-        //Fragment f = null;
-        //f = this.getActivity().getSupportFragmentManager().findFragmentById(R.id.pubFragment);
-        FragmentTransaction ft = this.getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.detach(this);
         ft.attach(this);
         ft.commit();

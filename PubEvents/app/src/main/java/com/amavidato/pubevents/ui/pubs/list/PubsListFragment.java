@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +22,7 @@ import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Pub;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.general_list_fragment.GeneralListFragment;
+import com.amavidato.pubevents.utility.general_list_fragment.GeneralRecyclerViewAdapter;
 import com.amavidato.pubevents.utility.general_list_fragment.MyItem;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -61,10 +63,10 @@ public class PubsListFragment extends GeneralListFragment {
 
     @Override
     protected void fillModelObjectValues(final DocumentSnapshot document, final List<MyItem> items, final int[] itemsDone, final int numItems, final RecyclerView recyclerView) {
-        final Pub pub = new Pub();
         Map<String, Object> data = document.getData();
         Log.d(TAG, document.getId() + " => " + data);
 
+        final Pub pub = new Pub();
         pub.setName((String) data.get(DBManager.CollectionsPaths.PubFields.NAME));
         pub.setGeoLocation((GeoPoint) data.get(DBManager.CollectionsPaths.PubFields.GEOLOCATION));
         pub.setAverageAge(((Long) data.get(DBManager.CollectionsPaths.PubFields.AVG_AGE)).intValue());
@@ -110,6 +112,11 @@ public class PubsListFragment extends GeneralListFragment {
     @Override
     protected String getUserDependedPathQueryList(String uid) {
         return DBManager.CollectionsPaths.USERS + "/" + uid + "/" + DBManager.CollectionsPaths.UserFields.FOLLOWED_PUBS;
+    }
+
+    @Override
+    protected GeneralRecyclerViewAdapter getConcreteRecyclerViewAdapter(List<MyItem> items, FragmentActivity activity) {
+        return new PubListRecyclerViewAdapter(items,activity);
     }
 
 }
