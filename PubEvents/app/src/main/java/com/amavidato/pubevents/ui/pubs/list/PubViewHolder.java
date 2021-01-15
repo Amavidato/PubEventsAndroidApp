@@ -1,4 +1,4 @@
-package com.amavidato.pubevents.ui.findpub.list;
+package com.amavidato.pubevents.ui.pubs.list;
 
 import android.view.View;
 import android.widget.GridLayout;
@@ -16,7 +16,7 @@ public class PubViewHolder extends GeneralViewHolder {
 
     public PubViewHolder(View view) {
         super(view);
-        mImgView = (ImageView) view.findViewById(R.id.pub_item_image);
+        mImgView = view.findViewById(R.id.pub_item_image);
         mContentView = view.findViewById(R.id.pub_item_content);
         mNameView = view.findViewById(R.id.pub_item_name);
         mCityView = view.findViewById(R.id.pub_item_city);

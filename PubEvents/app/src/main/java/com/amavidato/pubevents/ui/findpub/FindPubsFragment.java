@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Pub;
 import com.amavidato.pubevents.ui.findpub.map.MapViewModel;
+import com.amavidato.pubevents.ui.findpub.FindPubsFragmentDirections;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.MyFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;

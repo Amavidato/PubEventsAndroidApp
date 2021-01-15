@@ -1,55 +1,34 @@
-package com.amavidato.pubevents.ui.findpub.list;
+package com.amavidato.pubevents.ui.pubs.list;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.AppCompatSpinner;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Pub;
-import com.amavidato.pubevents.ui.pub.PubFragmentArgs;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.general_list_fragment.GeneralListFragment;
 import com.amavidato.pubevents.utility.general_list_fragment.MyItem;
-import com.amavidato.pubevents.utility.general_list_fragment.SortOptions;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -80,11 +59,11 @@ public class PubsListFragment extends GeneralListFragment {
         filterOptions = new FilterOptionsPub();
         sortOptions = new SortOptionsPub();
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.Filter_Options_pubs, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.filter_options_pubs, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerFilter.setAdapter(adapter);
 
-        adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.Sort_Options_pubs, android.R.layout.simple_spinner_item);
+        adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.sort_options_pubs, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerSort.setAdapter(adapter);
     }
@@ -101,7 +80,6 @@ public class PubsListFragment extends GeneralListFragment {
 
     @Override
     protected void popolateSpecificRecyclerView() {
-
         String path = "";
         if (specificRecyclerView instanceof RecyclerView) {
             progressBar.setVisibility(View.VISIBLE);

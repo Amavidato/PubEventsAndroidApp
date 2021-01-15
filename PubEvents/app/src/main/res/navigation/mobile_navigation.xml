@@ -43,7 +43,7 @@
     </fragment>
     <fragment
         android:id="@+id/pubsListFragment"
-        android:name="com.amavidato.pubevents.ui.findpub.list.PubsListFragment"
+        android:name="com.amavidato.pubevents.ui.pubs.list.PubsListFragment"
         android:label="PubsListFragment"
         android:layout="@layout/general_list_fragment">
         <argument
@@ -56,7 +56,7 @@
 
     <fragment
         android:id="@+id/nav_followed_pubs"
-        android:name="com.amavidato.pubevents.ui.findpub.list.PubsListFragment"
+        android:name="com.amavidato.pubevents.ui.pubs.list.PubsListFragment"
         android:label="@string/menu_followed_pubs"
         tools:layout="@layout/general_list_fragment">
         <argument
@@ -70,7 +70,7 @@
 
     <fragment
         android:id="@+id/pubFragment"
-        android:name="com.amavidato.pubevents.ui.pub.PubFragment"
+        android:name="com.amavidato.pubevents.ui.pubs.pub.PubFragment"
         android:label="fragment_pub"
         tools:layout="@layout/fragment_pub" >
         <argument
@@ -80,9 +80,9 @@
 
     <fragment
         android:id="@+id/nav_acquired_events"
-        android:name="com.amavidato.pubevents.ui.acquired_events.AcquiredEventsFragment"
+        android:name="com.amavidato.pubevents.ui.events.list.EventListFragment"
         android:label="@string/menu_acquired_events"
-        tools:layout="@layout/fragment_acquired_events">
+        tools:layout="@layout/general_list_fragment">
         <action
             android:id="@+id/action_open_eventFragment"
             app:destination="@id/eventFragment" />

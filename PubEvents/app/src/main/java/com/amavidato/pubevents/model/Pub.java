@@ -1,6 +1,5 @@
 package com.amavidato.pubevents.model;
 
-import com.amavidato.pubevents.ui.findpub.list.PubItem;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.gson.Gson;
 

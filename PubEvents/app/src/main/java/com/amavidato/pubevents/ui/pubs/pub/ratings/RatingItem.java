@@ -1,8 +1,7 @@
-package com.amavidato.pubevents.ui.pub.ratings;
+package com.amavidato.pubevents.ui.pubs.pub.ratings;
 
-import com.amavidato.pubevents.model.Pub;
 import com.amavidato.pubevents.model.Rating;
-import com.amavidato.pubevents.ui.findpub.list.PubItem;
+import com.amavidato.pubevents.ui.pubs.list.PubItem;
 import com.google.gson.Gson;
 
 public class RatingItem {

@@ -1,21 +1,12 @@
-package com.amavidato.pubevents.ui.findpub.list;
+package com.amavidato.pubevents.ui.pubs.list;
 
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
-import android.app.Application;
 import android.location.Location;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Pub;
@@ -24,8 +15,6 @@ import com.amavidato.pubevents.utility.general_list_fragment.GeneralViewHolder;
 import com.amavidato.pubevents.utility.general_list_fragment.MyItem;
 import com.google.firebase.firestore.GeoPoint;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;

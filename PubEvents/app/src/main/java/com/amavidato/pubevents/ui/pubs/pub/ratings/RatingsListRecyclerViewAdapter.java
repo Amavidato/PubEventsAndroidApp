@@ -1,4 +1,4 @@
-package com.amavidato.pubevents.ui.pub.ratings;
+package com.amavidato.pubevents.ui.pubs.pub.ratings;
 
 import android.view.LayoutInflater;
 import android.view.View;

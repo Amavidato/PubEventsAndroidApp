@@ -29,7 +29,7 @@ public abstract class GeneralRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     private Filter filter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
-            Log.d(TAG, "PERFORM FILTERING:"+charSequence);
+            Log.d(TAG, "PERFORM FILTERING:"+charSequence+"***SelFiltOpt:"+selectedFilterOpt);
             List<MyItem> filtered = new ArrayList<>();
             currentFilterString = charSequence.toString();
             if(currentFilterString.isEmpty()){
@@ -48,7 +48,7 @@ public abstract class GeneralRecyclerViewAdapter extends RecyclerView.Adapter<Ge
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             toShow.clear();
             toShow.addAll((Collection<? extends MyItem>) filterResults.values);
-            Log.d("PUBLISH FILTER","results:ALL"+all+"\nTO SHOW"+toShow);
+            Log.d("PUBLISH FILTER","filterResult:"+filterResults.values+"\nresults:ALL"+all+"\nTO SHOW"+toShow);
             onSortOptSelected(selectedSortOpt,lastKnownLoc);
             notifyDataSetChanged();
         }

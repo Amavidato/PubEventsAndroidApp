@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,12 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatSpinner;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.amavidato.pubevents.R;
-import com.amavidato.pubevents.ui.findpub.list.PubsListFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -71,6 +68,7 @@ public abstract class GeneralListFragment extends Fragment {
                 if (view != null) {
                     String selected = ((TextView) view).getText().toString();
                     if (recyclerAdapter != null) {
+                        Log.d(TAG,"AAAAAAAAAAA:"+filterOptions.valueOf(selected.toUpperCase()));
                         recyclerAdapter.onFilterOptSelected(filterOptions.valueOf(selected.toUpperCase()), searchView.getQuery().toString());
                     }
                 }

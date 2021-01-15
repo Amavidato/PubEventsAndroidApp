@@ -46,17 +46,17 @@
     <string name="filter_title">Filter by:</string>
     <string name="sort_title">Sort by:</string>
 
-    <string-array name="Filter_Options_pubs">
+    <string-array name="filter_options_pubs">
         <item>Name</item>
         <item>City</item>
     </string-array>
 
-    <string-array name="Filter_Options_events">
+    <string-array name="filter_options_events">
         <item>Name</item>
-        <item>Pub</item>
+        <item>Pub_name</item>
     </string-array>
 
-    <string-array name="Sort_Options_pubs">
+    <string-array name="sort_options_pubs">
         <item>Name (Asc)</item>
         <item>Name (Desc)</item>
         <item>City name (Asc)</item>
@@ -69,6 +69,20 @@
         <item>Price (Desc)</item>
         <item>Avg. age (Asc)</item>
         <item>Avg. age (Desc)</item>
+        <item></item>
+    </string-array>
+
+    <string-array name="sort_options_events">
+        <item>Name (Asc)</item>
+        <item>Name (Desc)</item>
+        <item>Pub name (Asc)</item>
+        <item>Pub name (Desc)</item>
+        <item>City name (Asc)</item>
+        <item>City name (Desc)</item>
+        <item>Closest to Farthest</item>
+        <item>Farthest to Closest</item>
+        <item>Price (Asc)</item>
+        <item>Price (Desc)</item>
         <item></item>
     </string-array>
 

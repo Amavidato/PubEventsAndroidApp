@@ -1,4 +1,4 @@
-package com.amavidato.pubevents.ui.pub;
+package com.amavidato.pubevents.ui.pubs.pub;
 
 import android.content.Context;
 import android.os.Build;
@@ -27,8 +27,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Pub;
 import com.amavidato.pubevents.model.Rating;
-import com.amavidato.pubevents.ui.pub.ratings.RatingItem;
-import com.amavidato.pubevents.ui.pub.ratings.RatingsListRecyclerViewAdapter;
+import com.amavidato.pubevents.ui.pubs.pub.ratings.RatingItem;
+import com.amavidato.pubevents.ui.pubs.pub.ratings.RatingsListRecyclerViewAdapter;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.MyFragment;
 import com.google.android.gms.tasks.OnCompleteListener;

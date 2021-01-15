@@ -1,4 +1,4 @@
-package com.amavidato.pubevents.ui.findpub.list;
+package com.amavidato.pubevents.ui.pubs.list;
 
 import com.amavidato.pubevents.utility.general_list_fragment.SortOptions;
 

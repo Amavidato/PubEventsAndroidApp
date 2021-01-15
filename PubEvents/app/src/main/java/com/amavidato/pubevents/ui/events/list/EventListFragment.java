@@ -1,29 +1,25 @@
-package com.amavidato.pubevents.ui.acquired_events;
+package com.amavidato.pubevents.ui.events.list;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.ProgressBar;
-import android.widget.SearchView;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatSpinner;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Event;
+import com.amavidato.pubevents.utility.MyFragment;
 import com.amavidato.pubevents.utility.db.DBManager;
+import com.amavidato.pubevents.utility.general_list_fragment.GeneralListFragment;
+import com.amavidato.pubevents.utility.general_list_fragment.MyItem;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
@@ -39,52 +35,46 @@ import java.util.Map;
 
 import static java.lang.String.valueOf;
 
-public class AcquiredEventsFragment extends Fragment {
+public class EventListFragment extends GeneralListFragment {
 
-    private static final String TAG = AcquiredEventsFragment.class.getSimpleName();
-
-    private ProgressBar progressBar;
-    private AcquiredEventsRecyclerViewAdapter recyclerAdapter;
-    private AppCompatSpinner spinnerFilter;
-    enum FilterOptions {NAME,PUB};
-
-    private SearchView searchView;
-
+    private static final String TAG = EventListFragment.class.getSimpleName();
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public AcquiredEventsFragment() {
+    public EventListFragment() {
     }
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_acquired_events, container, false);
-        View listView = view.findViewById(R.id.acquired_events_list);
-        progressBar = view.findViewById(R.id.acquired_events_loading_list);
-        progressBar.setVisibility(View.VISIBLE);
-        spinnerFilter = view.findViewById(R.id.acquired_events_filter_option);
-        spinnerFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(view != null){
-                    String selected = ((TextView) view).getText().toString();
-                    if(recyclerAdapter != null){
-                        recyclerAdapter.onFilterOptSelected(FilterOptions.valueOf(selected.toUpperCase()),searchView.getQuery().toString());
-                    }
-                }
-            }
+    @Override
+    protected void initializeFilterAndSortOptions() {
+        filterOptions = new FilterOptionsEvent();
+        sortOptions = new SortOptionsEvent();
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.filter_options_events, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFilter.setAdapter(adapter);
 
-            }
-        });
-        // Set the adapter
-        if (listView instanceof RecyclerView) {
+        adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.sort_options_events, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSort.setAdapter(adapter);
+    }
+
+    @Override
+    protected View createSpecificListLayout() {
+        return (LinearLayout) getLayoutInflater().inflate(R.layout.fragment_eventlist, null);
+    }
+
+    @Override
+    protected View createSpecificRecyclerView() {
+        return specificListLayout.findViewById(R.id.frag_recycler_view_eventlist);
+    }
+
+    @Override
+    protected void popolateSpecificRecyclerView() {
+        if (specificRecyclerView instanceof RecyclerView) {
             progressBar.setVisibility(View.VISIBLE);
-            final Context context = listView.getContext();
-            final RecyclerView recyclerView = (RecyclerView) listView;
+            final Context context = specificRecyclerView.getContext();
+            final RecyclerView recyclerView = (RecyclerView) specificRecyclerView;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
             DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(),DividerItemDecoration.VERTICAL);
@@ -96,7 +86,7 @@ public class AcquiredEventsFragment extends Fragment {
                         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        final List<EventItem> events = new ArrayList<>();
+                        final List<MyItem> events = new ArrayList<>();
                         final int[] acquiredEvents = {task.getResult().size()};
                         for(final QueryDocumentSnapshot document : task.getResult()){
 
@@ -135,8 +125,9 @@ public class AcquiredEventsFragment extends Fragment {
                                                         events.add(new EventItem(eventID, event));
                                                         acquiredEvents[0]--;
                                                         if(acquiredEvents[0] == 0){
-                                                            recyclerAdapter = new AcquiredEventsRecyclerViewAdapter(events,getActivity());
+                                                            recyclerAdapter = new EventListRecyclerViewAdapter(events,getActivity());
                                                             recyclerView.setAdapter(recyclerAdapter);
+                                                            initializeRecyclerAdapter(events);
                                                             return;
                                                         }
                                                     }
@@ -151,46 +142,5 @@ public class AcquiredEventsFragment extends Fragment {
                 });
             }
         }
-
-        setHasOptionsMenu(true);
-
-        return view;
     }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchItem.setVisible(true);
-        searchView = (SearchView) searchItem.getActionView();
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                //if query is empty, override default onClose by doing nothing
-                if(searchView.getQuery().toString().isEmpty()){
-                    return true;
-                }
-                //else run default onClose (it will delete the query)
-                return false;
-            }
-        });
-
-        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        searchView.setIconified(false);
-        searchView.setQueryHint("Search...");
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) { return false; }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                recyclerAdapter.getFilter().filter(s);
-                return false;
-            }
-        });
-
-
-        super.onPrepareOptionsMenu(menu);
-    }
-
-
 }

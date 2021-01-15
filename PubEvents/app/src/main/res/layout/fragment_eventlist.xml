@@ -8,14 +8,13 @@
     android:background="#ffffff">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/frag_recycler_view_publist"
-        android:name="com.amavidato.pubevents.ui.findpub.list.PubsListFragment"
+        android:id="@+id/frag_recycler_view_eventlist"
+        android:name="com.amavidato.pubevents.ui.events.list.EventListFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layoutManager="LinearLayoutManager"
-        tools:context=".ui.pubs.list.PubsListFragment"
-        tools:listitem="@layout/pub_item" />
+        tools:context=".ui.events.list.EventListFragment"
+        tools:listitem="@layout/event_item" />
 
 </LinearLayout>
-
 
