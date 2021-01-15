@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -38,7 +37,6 @@ import java.util.Map;
 public class PubsListFragment extends GeneralListFragment {
 
     private static final String TAG = PubsListFragment.class.getSimpleName();
-    private boolean openFollowedPubsList;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -47,25 +45,8 @@ public class PubsListFragment extends GeneralListFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        openFollowedPubsList = PubsListFragmentArgs.fromBundle(getArguments()).getStringOpenFollowedPubsList();
-        View view = super.onCreateView(inflater,container,savedInstanceState);
-        Log.d(TAG, "OPEN FPL: "+openFollowedPubsList);
-        return view;
-    }
-    @Override
-    protected void initializeFilterAndSortOptions() {
-        filterOptions = new FilterOptionsPub();
-        sortOptions = new SortOptionsPub();
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.filter_options_pubs, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerFilter.setAdapter(adapter);
-
-        adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.sort_options_pubs, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSort.setAdapter(adapter);
+    protected void initFilterAndSort() {
+        initSpinners(new FilterOptionsPub(),new SortOptionsPub(), R.array.filter_options_pubs, R.array.sort_options_pubs);
     }
 
     @Override
@@ -79,74 +60,8 @@ public class PubsListFragment extends GeneralListFragment {
     }
 
     @Override
-    protected void popolateSpecificRecyclerView() {
-        String path = "";
-        if (specificRecyclerView instanceof RecyclerView) {
-            progressBar.setVisibility(View.VISIBLE);
-            final Context context = specificRecyclerView.getContext();
-            final RecyclerView recyclerView = (RecyclerView) specificRecyclerView;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-
-            DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(),DividerItemDecoration.VERTICAL);
-            recyclerView.addItemDecoration(divider);
-
-            if(openFollowedPubsList){
-                //Query to retrieve pubs information
-                String uid = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                if(uid!=null) {
-                    path = DBManager.CollectionsPaths.USERS + "/" + uid + "/" + DBManager.CollectionsPaths.UserFields.FOLLOWED_PUBS;
-                }else {
-                    return;
-                }
-            } else{
-                path = DBManager.CollectionsPaths.PUBS;
-            }
-            FirebaseFirestore.getInstance().collection(path)
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @RequiresApi(api = Build.VERSION_CODES.N)
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                final List<MyItem> pubs = new ArrayList<>();
-                                final int numPubs = task.getResult().size();
-                                final int[] pubsDone = {0};
-                                for (final DocumentSnapshot document : task.getResult()) {
-                                    final String pubID = document.getId();
-                                    final Pub pub = new Pub();
-                                    if(openFollowedPubsList) {
-                                        fillWithFollowedPubs(pubID, pub, document, pubs, pubsDone,numPubs,recyclerView);
-                                    }else {
-                                        fillPubValues(pubID, pub, document, pubs, pubsDone,numPubs,recyclerView);
-                                    }
-                                }
-                            } else {
-                                Log.d(TAG, "Error getting documents: ", task.getException());
-                                Toast.makeText(context, "Error getting pub list from database.\n Please check your connection and try again.", Toast.LENGTH_LONG).show();
-                            }
-                            progressBar.setVisibility(View.INVISIBLE);
-                        }
-                    });
-            }
-    }
-
-    private void fillWithFollowedPubs(final String pubID, final Pub pub, final DocumentSnapshot document, final List<MyItem> pubs, final int[] pubsDone, final int numPubs, final RecyclerView recyclerView) {
-        FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.PUBS)
-                .document(pubID)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            fillPubValues(pubID, pub, task.getResult(), pubs, pubsDone,numPubs,recyclerView);
-                        } else {
-                            Log.d(TAG, "ERROR");
-                        }
-                    }
-                });
-    }
-
-    private void fillPubValues(final String pubID, final Pub pub, DocumentSnapshot document, final List<MyItem> pubs, final int[] pubsDone, final int numPubs, final RecyclerView recyclerView) {
+    protected void fillModelObjectValues(final DocumentSnapshot document, final List<MyItem> items, final int[] itemsDone, final int numItems, final RecyclerView recyclerView) {
+        final Pub pub = new Pub();
         Map<String, Object> data = document.getData();
         Log.d(TAG, document.getId() + " => " + data);
 
@@ -172,13 +87,7 @@ public class PubsListFragment extends GeneralListFragment {
                             Map<String, Object> data = task.getResult().getData();
                             Log.d(TAG + "--CITy", task.getResult().getId() + " => " + data);
                             pub.setCity((String) data.get(DBManager.CollectionsPaths.CityFields.NAME));
-                            pubs.add(new PubItem(pubID, pub));
-                            pubsDone[0]++;
-                            if (pubsDone[0] == numPubs) {
-                                recyclerAdapter = new PubListRecyclerViewAdapter(pubs, getActivity());
-                                recyclerView.setAdapter(recyclerAdapter);
-                                initializeRecyclerAdapter(pubs);
-                            }
+                            addItemToList(items,new PubItem(document.getId(),pub),itemsDone,numItems,recyclerView);
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                             pub.setCity("ERROR");
@@ -186,4 +95,21 @@ public class PubsListFragment extends GeneralListFragment {
                     }
                 });
     }
+
+    @Override
+    protected boolean getUserDependedListFragArgument() {
+        return PubsListFragmentArgs.fromBundle(getArguments()).getStringOpenUserDependentList();
+    }
+
+    @Override
+    protected String getGeneralPathQueryList() {
+        return DBManager.CollectionsPaths.PUBS;
+    }
+
+
+    @Override
+    protected String getUserDependedPathQueryList(String uid) {
+        return DBManager.CollectionsPaths.USERS + "/" + uid + "/" + DBManager.CollectionsPaths.UserFields.FOLLOWED_PUBS;
+    }
+
 }

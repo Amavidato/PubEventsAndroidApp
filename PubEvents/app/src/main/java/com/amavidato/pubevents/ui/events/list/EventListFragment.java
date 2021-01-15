@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Event;
+import com.amavidato.pubevents.ui.pubs.list.FilterOptionsPub;
 import com.amavidato.pubevents.utility.MyFragment;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.general_list_fragment.GeneralListFragment;
@@ -46,17 +47,8 @@ public class EventListFragment extends GeneralListFragment {
     }
 
     @Override
-    protected void initializeFilterAndSortOptions() {
-        filterOptions = new FilterOptionsEvent();
-        sortOptions = new SortOptionsEvent();
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.filter_options_events, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerFilter.setAdapter(adapter);
-
-        adapter = ArrayAdapter.createFromResource(this.getContext(), R.array.sort_options_events, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSort.setAdapter(adapter);
+    protected void initFilterAndSort() {
+        initSpinners(new FilterOptionsEvent(),new SortOptionsEvent(), R.array.filter_options_events, R.array.sort_options_events);
     }
 
     @Override
@@ -68,7 +60,7 @@ public class EventListFragment extends GeneralListFragment {
     protected View createSpecificRecyclerView() {
         return specificListLayout.findViewById(R.id.frag_recycler_view_eventlist);
     }
-
+/*
     @Override
     protected void popolateSpecificRecyclerView() {
         if (specificRecyclerView instanceof RecyclerView) {
@@ -142,5 +134,25 @@ public class EventListFragment extends GeneralListFragment {
                 });
             }
         }
+    }*/
+
+    @Override
+    protected void fillModelObjectValues(DocumentSnapshot document, List<MyItem> items, int[] itemsDone, int numItems, RecyclerView recyclerView) {
+        
+    }
+
+    @Override
+    protected boolean getUserDependedListFragArgument() {
+        return false;
+    }
+
+    @Override
+    protected String getGeneralPathQueryList() {
+        return null;
+    }
+
+    @Override
+    protected String getUserDependedPathQueryList(String uid) {
+        return null;
     }
 }

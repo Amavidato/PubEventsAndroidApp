@@ -1,8 +1,10 @@
 package com.amavidato.pubevents.utility.general_list_fragment;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,25 +14,41 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.amavidato.pubevents.R;
+import com.amavidato.pubevents.ui.pubs.list.PubListRecyclerViewAdapter;
+import com.amavidato.pubevents.ui.pubs.list.PubsListFragmentArgs;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class GeneralListFragment extends Fragment {
     private static final String TAG = GeneralListFragment.class.getSimpleName();
+    private boolean userDependentList;
 
     protected ProgressBar progressBar;
     protected GeneralRecyclerViewAdapter recyclerAdapter;
@@ -51,6 +69,7 @@ public abstract class GeneralListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG,"INSIDE ON CREATE VIEW GENERAL");
+        userDependentList = getUserDependedListFragArgument();
         View root = inflater.inflate(R.layout.general_list_fragment, container, false);
 
         LinearLayout listViewContainer = root.findViewById(R.id.frag_genlist_recycler_view_container);
@@ -68,7 +87,6 @@ public abstract class GeneralListFragment extends Fragment {
                 if (view != null) {
                     String selected = ((TextView) view).getText().toString();
                     if (recyclerAdapter != null) {
-                        Log.d(TAG,"AAAAAAAAAAA:"+filterOptions.valueOf(selected.toUpperCase()));
                         recyclerAdapter.onFilterOptSelected(filterOptions.valueOf(selected.toUpperCase()), searchView.getQuery().toString());
                     }
                 }
@@ -93,12 +111,11 @@ public abstract class GeneralListFragment extends Fragment {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
         setHasOptionsMenu(true);
 
-        initializeFilterAndSortOptions();
+        initFilterAndSort();
         specificRecyclerView = createSpecificRecyclerView();
         popolateSpecificRecyclerView();
         return root;
     }
-
 
 
     protected void initializeRecyclerAdapter(List<MyItem> items) {
@@ -223,11 +240,136 @@ public abstract class GeneralListFragment extends Fragment {
                 });
     }
 
-    protected abstract void initializeFilterAndSortOptions();
+    protected abstract void initFilterAndSort();
+
+    protected void initSpinners(FilterOptions fo, SortOptions so, int array_fo_id, int array_so_id){
+        filterOptions = fo;
+        sortOptions = so;
+        initSpinnerAdapter(spinnerFilter,array_fo_id);
+        initSpinnerAdapter(spinnerSort,array_so_id);
+    }
+
+    private void initSpinnerAdapter(AppCompatSpinner spinner, int array_id){
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getContext(), array_id, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+    }
 
     protected abstract View createSpecificListLayout();
-
     protected abstract View createSpecificRecyclerView();
 
-    protected abstract void popolateSpecificRecyclerView();
+    private void popolateSpecificRecyclerView(){
+        String path = "";
+        if (specificRecyclerView instanceof RecyclerView) {
+            progressBar.setVisibility(View.VISIBLE);
+            final Context context = specificRecyclerView.getContext();
+            final RecyclerView recyclerView = (RecyclerView) specificRecyclerView;
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+            DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(),DividerItemDecoration.VERTICAL);
+            recyclerView.addItemDecoration(divider);
+            if(userDependentList){
+                //Query to retrieve pubs information
+                String uid = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                if(uid!=null) {
+                    path = getUserDependedPathQueryList(uid);
+                }else {
+                    return;
+                }
+            } else{
+                path = getGeneralPathQueryList();
+            }
+            FirebaseFirestore.getInstance().collection(path)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                final List<MyItem> items = new ArrayList<>();
+                                final int numItems = task.getResult().size();
+                                final int[] itemsDone = {0};
+                                for (final DocumentSnapshot document : task.getResult()) {
+                                    final String itemID = document.getId();
+                                    if(userDependentList) {
+                                        makeUserDependentQuery(document, items, itemsDone,numItems,recyclerView);
+                                    }else {
+                                        fillModelObjectValues(document, items, itemsDone,numItems,recyclerView);
+                                    }
+                                }
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                                Toast.makeText(context, "Error getting pub list from database.\n Please check your connection and try again.", Toast.LENGTH_LONG).show();
+                            }
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+                    });
+        }
+    }
+
+    protected abstract void fillModelObjectValues(final DocumentSnapshot document, final List<MyItem> items, final int[] itemsDone, final int numItems, final RecyclerView recyclerView);
+    /*{
+        final Pub pub = new Pub();
+        Map<String, Object> data = document.getData();
+        Log.d(TAG, document.getId() + " => " + data);
+
+        pub.setName((String) data.get(DBManager.CollectionsPaths.PubFields.NAME));
+        pub.setGeoLocation((GeoPoint) data.get(DBManager.CollectionsPaths.PubFields.GEOLOCATION));
+        pub.setAverageAge(((Long) data.get(DBManager.CollectionsPaths.PubFields.AVG_AGE)).intValue());
+        pub.setPrice(Pub.Price.valueOf(((String) data.get(DBManager.CollectionsPaths.PubFields.PRICE)).toUpperCase()));
+        Object ratingTemp = data.get(DBManager.CollectionsPaths.PubFields.OVERALL_RATING);
+        if (ratingTemp instanceof Double) {
+            pub.setOverallRating((Double) ratingTemp);
+        } else if (ratingTemp instanceof Long) {
+            pub.setOverallRating(((Long) ratingTemp).doubleValue());
+        }
+        final String cityID = (String) data.get(DBManager.CollectionsPaths.PubFields.CITY);
+        //Nested query to retrieve city's information
+        FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.CITY)
+                .document(cityID)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            Map<String, Object> data = task.getResult().getData();
+                            Log.d(TAG + "--CITy", task.getResult().getId() + " => " + data);
+                            pub.setCity((String) data.get(DBManager.CollectionsPaths.CityFields.NAME));
+                            addItemToList(items,new PubItem(document.getId(),pub),itemsDone,numItems,recyclerView);
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            pub.setCity("ERROR");
+                        }
+                    }
+                });
+    }*/
+
+    protected void addItemToList(List<MyItem> items, MyItem itemToAdd, int[] itemsDone, int numItems, RecyclerView recyclerView){
+        items.add(itemToAdd);
+        itemsDone[0]++;
+        if (itemsDone[0] == numItems) {
+            recyclerAdapter = new PubListRecyclerViewAdapter(items, getActivity());
+            recyclerView.setAdapter(recyclerAdapter);
+            initializeRecyclerAdapter(items);
+        }
+    }
+    private void makeUserDependentQuery(final DocumentSnapshot document, final List<MyItem> items, final int[] itemsDone, final int numItems, final RecyclerView recyclerView) {
+        final String itemID = document.getId();
+        FirebaseFirestore.getInstance().document(getGeneralPathQueryList()+"/"+itemID)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            fillModelObjectValues(task.getResult(), items, itemsDone,numItems,recyclerView);
+                        } else {
+                            Log.d(TAG, "ERROR");
+                        }
+                    }
+                });
+    }
+
+    protected abstract boolean getUserDependedListFragArgument();
+    protected abstract String getGeneralPathQueryList();
+    protected abstract String getUserDependedPathQueryList(String uid);
 }

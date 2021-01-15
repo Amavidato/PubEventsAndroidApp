@@ -47,7 +47,7 @@
         android:label="PubsListFragment"
         android:layout="@layout/general_list_fragment">
         <argument
-            android:name="@string/open_followed_pubs_list"
+            android:name="@string/open_user_dependent_list"
             app:argType="boolean"/>
         <action
             android:id="@+id/action_open_pub_page"
@@ -60,7 +60,7 @@
         android:label="@string/menu_followed_pubs"
         tools:layout="@layout/general_list_fragment">
         <argument
-            android:name="@string/open_followed_pubs_list"
+            android:name="@string/open_user_dependent_list"
             app:argType="boolean"
             android:defaultValue="true"/>
         <action

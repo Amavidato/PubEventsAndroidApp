@@ -40,7 +40,7 @@
     <string name="wrong_email">Wrong password. Try again with another password</string>
     <string name="missing_image">missing image</string>
     <string name="action_search">Search</string>
-    <string name="open_followed_pubs_list">open_followed_pubs_list</string>
+    <string name="open_user_dependent_list">open_user_dependent_list</string>
     <string name="pub_id">pub_id</string>
     <string name="event_id">event_id</string>
     <string name="filter_title">Filter by:</string>
