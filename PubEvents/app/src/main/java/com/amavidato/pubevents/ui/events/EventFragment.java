@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.amavidato.pubevents.R;
+import com.amavidato.pubevents.ui.home.HomeFragment;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.MyFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -119,7 +121,7 @@ public class EventFragment extends MyFragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                Double pricePerUnit = Double.parseDouble(event_price.getText().toString());
+                Double pricePerUnit = Double.parseDouble(event_buy_price.getText().toString());
                 String s = event_buy_input.getText().toString();
                 Double numberOfTickets = Double.parseDouble(s.isEmpty() ? "0" : s);
                 Double tot = pricePerUnit * numberOfTickets;
@@ -165,57 +167,106 @@ public class EventFragment extends MyFragment {
         event_buy_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String s = event_buy_input.getText().toString();
-                final Double toBuy = Double.parseDouble(s.isEmpty() ? "0" : s);
-                if(toBuy>0){
-                    final String uid = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                    if(uid!=null){
-                        FirebaseFirestore.getInstance().document(DBManager.CollectionsPaths.USERS+"/"+uid
-                                +"/"+DBManager.CollectionsPaths.UserFields.ACQUIRED_EVENTS +"/"+eventID)
-                                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if(task.isSuccessful()){
-                                    Map<String,Object> data = task.getResult().getData();
-                                    Object tmp =  data.get(DBManager.CollectionsPaths.UserFields.AcquiredEventsFields.TICKETS_BOUGHT);
-                                    Integer tickets = null;
-                                    if(tmp instanceof Double){
-                                        tickets = ((Double)tmp).intValue();
-                                    }else if (tmp instanceof Long){
-                                        tickets = ((Long)tmp).intValue();
-                                    }
-                                    if(tickets==null){
-                                        tickets = 0;
-                                    }
-
-                                    data.put(DBManager.CollectionsPaths.UserFields.AcquiredEventsFields.TICKETS_BOUGHT,tickets+toBuy);
-                                    FirebaseFirestore.getInstance().document(DBManager.CollectionsPaths.USERS+"/"+uid
-                                            +"/"+DBManager.CollectionsPaths.UserFields.ACQUIRED_EVENTS +"/"+eventID)
-                                            .set(data)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Toast.makeText(EventFragment.this.getContext(),"Ticket buyed correctly!",Toast.LENGTH_SHORT).show();
-                                                    refreshFragment();
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(EventFragment.this.getContext(),"ERROR: " + e,Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }else{
-
-                                }
-                            }
-                        });
-                    }
-                }else{
-                    Toast.makeText(EventFragment.this.getContext(),"Number not inserted!\n Please insert a valid number of thickets you want to buy",Toast.LENGTH_LONG).show();
-                }
+                checkAndPerformPurchase();
             }
         });
         return root;
+    }
+
+    private void checkAndPerformPurchase() {
+        String strToBuy = event_buy_input.getText().toString();
+        final int toBuy = Integer.parseInt(strToBuy.isEmpty() ? "0" : strToBuy);
+        if(toBuy>0){
+            FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.EVENTS)
+                    .document(eventID)
+                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        Map<String, Object> data = task.getResult().getData();
+                        int maxCapacity = ((Long) data.get(DBManager.CollectionsPaths.EventFields.MAX_CAPACITY)).intValue();
+                        int reservedSeats = ((Long)data.get(DBManager.CollectionsPaths.EventFields.RESERVED_SEATS)).intValue();
+                        int availableSeats = maxCapacity - reservedSeats;
+                        if(toBuy<=availableSeats){
+                            buyTickets(toBuy,reservedSeats);
+                        }else{
+                            Toast.makeText(EventFragment.this.getContext(),"Sorry, there are not enough tickets available!",Toast.LENGTH_LONG).show();
+                        }
+                    }else{
+                        Toast.makeText(EventFragment.this.getContext(),"Error retrieving data!\n Please check your internet connection and try again.",Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }else{
+            Toast.makeText(EventFragment.this.getContext(),"Number not inserted!\n Please insert a valid number of thickets you want to buy",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void buyTickets(final int toBuy, final int oldReserved){
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        if(uid!=null) {
+            FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.USERS)
+                    .document(uid)
+                    .collection(DBManager.CollectionsPaths.UserFields.ACQUIRED_EVENTS)
+                    .document(eventID)
+                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        Map<String, Object> data = task.getResult().getData();
+                        Object tmp = data.get(DBManager.CollectionsPaths.UserFields.AcquiredEventsFields.TICKETS_BOUGHT);
+                        Integer tickets = null;
+                        if (tmp instanceof Double) {
+                            tickets = ((Double) tmp).intValue();
+                        } else if (tmp instanceof Long) {
+                            tickets = ((Long) tmp).intValue();
+                        }
+                        if (tickets == null) {
+                            tickets = 0;
+                        }
+                        data.put(DBManager.CollectionsPaths.UserFields.AcquiredEventsFields.TICKETS_BOUGHT, tickets + toBuy);
+                        FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.USERS)
+                                .document(uid)
+                                .collection(DBManager.CollectionsPaths.UserFields.ACQUIRED_EVENTS)
+                                .document(eventID)
+                                .set(data)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        updateEventSeats(eventID, oldReserved+toBuy);
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(EventFragment.this.getContext(), "ERROR: " + e, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+
+                    }
+                }
+            });
+        }
+    }
+
+    private void updateEventSeats(String eventID, int newReserved){
+        Map<String, Object> data = new HashMap<>();
+        data.put(DBManager.CollectionsPaths.EventFields.RESERVED_SEATS,newReserved);
+        FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.EVENTS)
+                .document(eventID)
+                .update(data)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(EventFragment.this.getContext(), "Ticket buyed correctly!", Toast.LENGTH_SHORT).show();
+                        refreshFragment();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(EventFragment.this.getContext(), "ERROR: " + e, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void refreshFragment(){

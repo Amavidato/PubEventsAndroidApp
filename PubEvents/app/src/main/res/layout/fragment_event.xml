@@ -33,19 +33,6 @@
                 android:layout_gravity="center"
                 android:textStyle="bold"
                 android:text="event type"/>
-            <!--        <ImageView-->
-            <!--            android:id="@+id/eventview_follow_btn_rmv"-->
-            <!--            android:visibility="gone"-->
-            <!--            android:layout_width="50dp"-->
-            <!--            android:layout_height="50dp"-->
-            <!--            app:srcCompat="@drawable/ic_baseline_remove_24"/>-->
-
-            <!--        <ImageView-->
-            <!--            android:id="@+id/eventview_follow_btn_add"-->
-            <!--            android:visibility="visible"-->
-            <!--            android:layout_width="50dp"-->
-            <!--            android:layout_height="50dp"-->
-            <!--            app:srcCompat="@drawable/ic_baseline_add_24"/>-->
         </androidx.cardview.widget.CardView>
 
         <ImageView
@@ -69,27 +56,6 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/eventview_image" />
-
-        <!--    <ImageView-->
-        <!--        android:id="@+id/eventview_price_img"-->
-        <!--        android:layout_width="32dp"-->
-        <!--        android:layout_height="32dp"-->
-        <!--        android:layout_marginTop="16dp"-->
-        <!--        app:srcCompat="@drawable/ic_price_24"-->
-        <!--        app:layout_constraintStart_toEndOf="@+id/eventview_name"-->
-        <!--        app:layout_constraintTop_toBottomOf="@+id/eventview_image"/>-->
-
-        <!--    <TextView-->
-        <!--        android:id="@+id/eventview_price"-->
-        <!--        android:layout_width="44dp"-->
-        <!--        android:layout_height="22dp"-->
-        <!--        android:layout_marginTop="20dp"-->
-        <!--        android:textAppearance="?attr/textAppearanceListItem"-->
-        <!--        android:textSize="16dp"-->
-        <!--        android:textStyle="bold"-->
-        <!--        app:layout_constraintStart_toEndOf="@+id/eventview_price_img"-->
-        <!--        app:layout_constraintTop_toBottomOf="@+id/eventview_image"/>-->
-
         <TextView
             android:id="@+id/eventview_pub"
             android:layout_width="0dp"
@@ -153,6 +119,33 @@
             app:layout_constraintStart_toStartOf="@+id/eventview_name"
             app:layout_constraintTop_toBottomOf="@+id/eventview_date" />
 
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/eventview_main_info_container">
+        <TextView
+            android:id="@+id/eventview_tickets_info_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tickets Info"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <ImageView
+            android:id="@+id/eventview_seats_img"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginLeft="24dp"
+            app:srcCompat="@drawable/ic_baseline_people_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/eventview_tickets_info_txt"/>
         <TextView
             android:id="@+id/eventview_reserved_seats"
             android:layout_width="wrap_content"
@@ -161,8 +154,8 @@
             android:layout_marginLeft="8dp"
             android:gravity="center_vertical"
             android:text=""
-            app:layout_constraintStart_toEndOf="@+id/eventview_geopoint_img"
-            app:layout_constraintTop_toBottomOf="@+id/eventview_time" />
+            app:layout_constraintStart_toEndOf="@+id/eventview_seats_img"
+            app:layout_constraintTop_toTopOf="@+id/eventview_seats_img"/>
         <TextView
             android:id="@+id/eventview_seats_divider"
             android:layout_width="wrap_content"
@@ -173,7 +166,7 @@
             android:text="/"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/eventview_reserved_seats"
-            app:layout_constraintTop_toBottomOf="@+id/eventview_time" />
+            app:layout_constraintTop_toTopOf="@+id/eventview_reserved_seats" />
         <TextView
             android:id="@+id/eventview_max_capacity"
             android:layout_width="wrap_content"
@@ -183,26 +176,7 @@
             android:gravity="center_vertical"
             android:text=""
             app:layout_constraintStart_toEndOf="@+id/eventview_seats_divider"
-            app:layout_constraintTop_toBottomOf="@+id/eventview_time" />
-
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_row="1"
-            android:layout_column="1"
-            app:srcCompat="@drawable/ic_baseline_people_24"
-            app:layout_constraintStart_toStartOf="@+id/eventview_name"
-            app:layout_constraintTop_toBottomOf="@+id/eventview_time" />
-        <TextView
-            android:id="@+id/eventview_price"
-            android:layout_width="0dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:gravity="center_vertical"
-            android:text="0"
-            app:layout_constraintStart_toEndOf="@+id/eventview_geopoint_img"
-            app:layout_constraintTop_toBottomOf="@+id/eventview_reserved_seats" />
+            app:layout_constraintTop_toTopOf="@+id/eventview_reserved_seats" />
 
         <ImageView
             android:layout_width="32dp"
@@ -210,35 +184,59 @@
             android:layout_row="1"
             android:layout_column="1"
             app:srcCompat="@drawable/ic_price_24"
-            app:layout_constraintStart_toStartOf="@+id/eventview_name"
-            app:layout_constraintTop_toBottomOf="@+id/eventview_reserved_seats" />
+            app:layout_constraintStart_toStartOf="@+id/eventview_seats_img"
+            app:layout_constraintTop_toBottomOf="@+id/eventview_seats_img" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/eventview_price"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:gravity="center_vertical"
+            android:text=""
+            app:layout_constraintStart_toEndOf="@+id/eventview_seats_img"
+            app:layout_constraintTop_toBottomOf="@+id/eventview_seats_img" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/eventview_main_info_container">
+        <TextView
+            android:id="@+id/eventview_price_x"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:gravity="center_vertical"
+            android:text="x"
+            app:layout_constraintStart_toEndOf="@+id/eventview_price"
+            app:layout_constraintTop_toTopOf="@+id/eventview_price" />
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            app:srcCompat="@drawable/ic_baseline_ticket_24"
+            app:layout_constraintStart_toEndOf="@+id/eventview_price_x"
+            app:layout_constraintTop_toBottomOf="@+id/eventview_seats_img" />
 
         <TextView
             android:id="@+id/eventview_tickets_bought_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="50dp"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/eventview_price"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:text="Tickets bought:"
-            android:textSize="30dp"/>
+            android:textSize="25dp"/>
         <TextView
             android:id="@+id/eventview_tickets_bought_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             app:layout_constraintStart_toEndOf="@+id/eventview_tickets_bought_txt"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/eventview_tickets_bought_txt"
             android:textStyle="bold"
-            android:textSize="30dp"
+            android:textSize="25dp"
             android:text="0" />
 
         <TextView
@@ -246,6 +244,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Do you want to buy some tickets?"
+            android:textSize="12dp"
             android:textStyle="italic"
             android:gravity="center"
             android:layout_marginTop="10dp"
@@ -260,7 +259,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginLeft="8dp"
             android:text="Buy tickets:"
-            android:textSize="20dp"
+            android:textSize="18dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/eventview_question"/>
 
@@ -268,11 +267,10 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:id="@+id/eventview_buy_number_layout"
             android:layout_width="150dp"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:hint="insert number"
-
             app:layout_constraintStart_toEndOf="@+id/eventview_buy_txt"
             app:layout_constraintTop_toBottomOf="@id/eventview_question">
 
@@ -292,7 +290,7 @@
             android:layout_marginLeft="10dp"
             android:text="x"
             android:textStyle="bold"
-            android:textSize="20dp"
+            android:textSize="18dp"
             app:layout_constraintStart_toEndOf="@id/eventview_buy_number_layout"
             app:layout_constraintTop_toBottomOf="@+id/eventview_question"/>
         <ImageView
@@ -312,7 +310,7 @@
             android:layout_marginLeft="10dp"
             android:text="00.00"
             android:textStyle="bold"
-            android:textSize="20dp"
+            android:textSize="18dp"
             app:layout_constraintStart_toEndOf="@id/eventview_buy_euro_img"
             app:layout_constraintTop_toBottomOf="@+id/eventview_question"/>
 
@@ -350,13 +348,12 @@
             android:id="@+id/eventview_buy_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="15dp"
             android:text="BUY"
             app:layout_constraintTop_toBottomOf="@id/eventview_buy_tot_txt"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

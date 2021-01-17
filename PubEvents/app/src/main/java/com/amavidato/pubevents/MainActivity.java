@@ -16,15 +16,19 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -56,14 +60,66 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem itemLogin;
     private static final String TAG = MainActivity.class.getSimpleName();
     private String username;
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String dialogStr;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                dialogStr= null;
+                Log.d(TAG, "SIS null. DialSTR null");
+            } else {
+                dialogStr= extras.getString("dialog_str");
+                Log.d(TAG, "SIS null. GetSTR:"+dialogStr);
+            }
+        } else {
+            dialogStr= (String) savedInstanceState.getSerializable("dialog_str");
+            Log.d(TAG, "SIS NOT NULL. DialSTR: "+dialogStr);
+        }
+        openDialog(dialogStr);
         setContentView(R.layout.activity_main);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                final FirebaseUser mUser = firebaseAuth.getCurrentUser();//FirebaseAuth.getInstance().getCurrentUser();
+                final String[] username = {null};
+                if(mUser != null){
+                    mUser.getIdToken(true)
+                            .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                                public void onComplete(@NonNull Task<GetTokenResult> task) {
+                                    if (task.isSuccessful()) {
+                                        String idToken = task.getResult().getToken();
+                                        Log.d(MainActivity.TAG, "TOKEN EXISTS:"+idToken);
+                                        username[0] = mUser.getDisplayName();
+                                        // Send token to your backend via HTTPS
+                                        // ...
+                                    } else {
+                                        Log.d(MainActivity.TAG, "TOKEN DOESN'T EXISTS");
+                                        // Handle error -> task.getException();
+                                    }
+                                    setUI(username[0]);
+                                }
+                            });
+                }else{
+                    setUI(username[0]);
+                }
+
+                /*FirebaseUser user = firebaseAuth.getCurrentUser();
+                String username = null;
+                if(user != null){
+                    Log.d(TAG, "Current User NOT NULL:"+user);
+                    username = user.getDisplayName();
+
+                }else{
+                    Log.d(TAG, "Current User ***NULL***");
+                }
+                setUI(username);*/
+            }
+        });
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -136,32 +192,30 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if(account != null){
-            Log.d(TAG,"GAccount:"+account+"=====Current User:"+FirebaseAuth.getInstance().getCurrentUser());
-            updateUI(account);
-        }else{
+        //GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        //if(account != null){
+        //    Log.d(TAG,"GAccount:"+account+"=====Current User:"+FirebaseAuth.getInstance().getCurrentUser());
+        //    updateUI(account);
+        //}else{
             // Check if user is signed in (non-null) and update UI accordingly.
-            FirebaseUser currentUser = mAuth.getCurrentUser();
-            updateUI(currentUser);
-        }
+
+        //}
 
     }
 
-    private void updateUI(Object currentUser) {
+    private void updateUI(final Object currentUser) {
 
-        if(currentUser == null){
-            navUsername.setText("Guest");
-            itemFollowedPubs.setVisible(false);
-            itemInterestEvents.setVisible(false);
-            itemSettings.setVisible(false);
-            itemLogout.setVisible(false);
-            itemLogin.setVisible(true);
-        }else{
-            username = "Nome non trovato";
+        setUI(null);
+        /*navUsername.setText("Guest");
+        itemFollowedPubs.setVisible(false);
+        itemInterestEvents.setVisible(false);
+        itemSettings.setVisible(false);
+        itemLogout.setVisible(false);
+        itemLogin.setVisible(true);*/
+        if(currentUser != null) {
             if(currentUser instanceof FirebaseUser){
-                String uid = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                 if( ((FirebaseUser)currentUser).isEmailVerified()){
+                    String uid = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                     FirebaseFirestore.getInstance().document(DBManager.CollectionsPaths.USERS+"/"+uid)
                             .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
@@ -171,8 +225,9 @@ public class MainActivity extends AppCompatActivity {
                                 if (document.exists()) {
                                     Map<String, Object> data = document.getData();
                                     username = (String) data.get(DBManager.CollectionsPaths.UserFields.USERNAME);
-                                    navUsername.setText(username);
-                                    Log.d(TAG, "DocumentSnapshot data: " + data);
+                                    setUI(username);
+                                    //navUsername.setText(username);
+                                    Log.d(TAG, "DocumentSnapshot data: " + data + " currUs:"+currentUser);
                                 } else {
                                     Log.d(TAG, "No such document");
                                 }
@@ -183,16 +238,38 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }else{
                     Toast.makeText(this,R.string.email_not_verified_text,Toast.LENGTH_LONG).show();
+                    return;
                 }
             }else if(currentUser instanceof GoogleSignInAccount){
+                Log.d(TAG, FirebaseAuth.getInstance().getCurrentUser().toString());
                 username = ((GoogleSignInAccount) currentUser).getDisplayName();
+                setUI(username);
             }
-            navUsername.setText(username);
-            itemFollowedPubs.setVisible(true);
-            itemInterestEvents.setVisible(true);
-            itemSettings.setVisible(true);
-            itemLogout.setVisible(true);
-            itemLogin.setVisible(false);
+        }
+        /*navUsername.setText(username);
+        itemFollowedPubs.setVisible(true);
+        itemInterestEvents.setVisible(true);
+        itemSettings.setVisible(true);
+        itemLogout.setVisible(true);
+        itemLogin.setVisible(false);*/
+    }
+
+    private void setUI(String username){
+        boolean validUser = username != null && username != "";
+        navUsername.setText(validUser ? username :"Guest");
+        itemFollowedPubs.setVisible(validUser);
+        itemInterestEvents.setVisible(validUser);
+        itemSettings.setVisible(validUser);
+        itemLogout.setVisible(validUser);
+        itemLogin.setVisible(!validUser);
+    }
+
+    private void openDialog(String dialogStr) {
+        if(dialogStr != null){
+            new MaterialAlertDialogBuilder(this).setMessage(dialogStr)
+                    .setIcon(R.drawable.ic_baseline_error_24)
+                    .setTitle("Account's token is obsolete")
+                    .create().show();
         }
     }
 

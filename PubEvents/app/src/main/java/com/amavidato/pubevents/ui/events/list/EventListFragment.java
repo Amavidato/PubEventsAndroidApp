@@ -1,6 +1,7 @@
 package com.amavidato.pubevents.ui.events.list;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,16 +9,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.amavidato.pubevents.MainActivity;
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Event;
 import com.amavidato.pubevents.model.Pub;
+import com.amavidato.pubevents.ui.home.HomeFragment;
 import com.amavidato.pubevents.ui.pubs.list.FilterOptionsPub;
 import com.amavidato.pubevents.ui.pubs.list.PubItem;
 import com.amavidato.pubevents.utility.MyFragment;
@@ -29,6 +34,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
@@ -43,7 +49,7 @@ import java.util.Map;
 
 import static java.lang.String.valueOf;
 
-public class EventListFragment extends GeneralListFragment {
+public class EventListFragment extends GeneralListFragment{// implements FirebaseAuth.AuthStateListener {
 
     private static final String TAG = EventListFragment.class.getSimpleName();
     /**
@@ -52,6 +58,12 @@ public class EventListFragment extends GeneralListFragment {
      */
     public EventListFragment() {
     }
+
+   /* @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        FirebaseAuth.getInstance().addAuthStateListener(this);
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }*/
 
     @Override
     protected void initFilterAndSort() {
@@ -139,4 +151,26 @@ public class EventListFragment extends GeneralListFragment {
     protected GeneralRecyclerViewAdapter getConcreteRecyclerViewAdapter(List<MyItem> items, FragmentActivity activity) {
         return new EventListRecyclerViewAdapter(items,activity);
     }
+
+    /*private void backToHome(){
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        intent.putExtra("dialog_str", "Sorry! It seems that the account's token was obsolete. Please, Login again with your account."); // so you can pass what activity you're coming from, if needed
+        startActivity(intent);
+        this.getActivity().finish();
+
+        //FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        //transaction.replace(R.id.nav_host_fragment, new HomeFragment());
+        //transaction.commit();
+    }*/
+
+    /*@Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if(user != null){
+            Log.d(TAG, "Current User NOT NULL:"+user);
+        }else{
+            Log.d(TAG, "Current User ***NULL***");
+            backToHome();
+        }
+    }*/
 }
