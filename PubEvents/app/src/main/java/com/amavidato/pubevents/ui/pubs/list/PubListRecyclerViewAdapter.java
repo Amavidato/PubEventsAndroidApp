@@ -19,6 +19,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.amavidato.pubevents.utility.general_list_fragment.SortOptions.PROXIMITY_NEAREST;
+import static com.amavidato.pubevents.utility.general_list_fragment.SortOptions.PROXIMITY_FURTHEST;
+
 public class PubListRecyclerViewAdapter extends GeneralRecyclerViewAdapter {
     private static final String TAG = PubListRecyclerViewAdapter.class.getSimpleName();
 
@@ -109,7 +112,7 @@ public class PubListRecyclerViewAdapter extends GeneralRecyclerViewAdapter {
                         }
                     });
                     break;
-                case SortOptionsPub.CLOSEST_TO_FARTHEST:
+                case PROXIMITY_NEAREST:
                     if(currentLoc != null) {
                         lastKnownLoc = currentLoc;
                     }
@@ -136,7 +139,7 @@ public class PubListRecyclerViewAdapter extends GeneralRecyclerViewAdapter {
                         return false;
                     }
                     break;
-                case SortOptionsPub.FARTHEST_TO_CLOSEST:
+                case PROXIMITY_FURTHEST:
                     if(currentLoc != null) {
                         lastKnownLoc = currentLoc;
                     }
@@ -213,7 +216,7 @@ public class PubListRecyclerViewAdapter extends GeneralRecyclerViewAdapter {
                     });
                     break;
                 default:
-                    break;
+                    return false;
             }
         }
         return true;

@@ -8,8 +8,6 @@ public class SortOptionsPub implements SortOptions {
     public static final String NAME_DESC = "NAME_DESC";
     public static final String CITY_NAME_ASC = "CITY_NAME_ASC";
     public static final String CITY_NAME_DESC = "CITY_NAME_DESC";
-    public static final String CLOSEST_TO_FARTHEST = "CLOSEST_TO_FARTHEST";
-    public static final String FARTHEST_TO_CLOSEST = "FARTHEST_TO_CLOSEST";
     public static final String OVERALL_RATE_ASC = "OVERALL_RATE_ASC";
     public static final String OVERALL_RATE_DESC = "OVERALL_RATE_DESC";
     public static final String PRICE_ASC = "PRICE_ASC";
@@ -28,10 +26,10 @@ public class SortOptionsPub implements SortOptions {
                 return CITY_NAME_ASC;
             case CITY_NAME_DESC:
                 return CITY_NAME_DESC;
-            case CLOSEST_TO_FARTHEST:
-                return CLOSEST_TO_FARTHEST;
-            case FARTHEST_TO_CLOSEST:
-                return FARTHEST_TO_CLOSEST;
+            case PROXIMITY_NEAREST:
+                return PROXIMITY_NEAREST;
+            case PROXIMITY_FURTHEST:
+                return PROXIMITY_FURTHEST;
             case OVERALL_RATE_ASC:
                 return OVERALL_RATE_ASC;
             case OVERALL_RATE_DESC:

@@ -74,7 +74,7 @@ public class FindPubsFragment extends MyFragment implements OnMapReadyCallback, 
     // not granted.
     private final LatLng mDefaultLocation = new LatLng(39.353030, 16.235269);
     private static final int DEFAULT_ZOOM = 15;
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1234;
+    public static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1234;
     private boolean mLocationPermissionGranted;
 
     // The geographical location where the device is currently located. That is, the last-known

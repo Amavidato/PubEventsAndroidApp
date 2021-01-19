@@ -115,20 +115,23 @@ public class EventListFragment extends GeneralListFragment{// implements Firebas
         event.setMax_capacity(ltmp != null ? ltmp.intValue() : null);
 
         final String pubID = (String)data.get(DBManager.CollectionsPaths.EventFields.PUB);
-        FirebaseFirestore.getInstance().document(DBManager.CollectionsPaths.PUBS+"/"+pubID)
+        FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.PUBS)
+                .document(pubID)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
                     Map<String, Object> data = task.getResult().getData();
+                    Log.d(TAG, task.getResult().getId() + " => " + data);
 
-                    String pubName = data != null ? (String) data.get(DBManager.CollectionsPaths.PubFields.NAME) : "NULL";
-                    pubName = pubName != null ? pubName : "NULL";
-                    event.setPub(pubName);
+                    final Pub pub = new Pub();
+                    pub.setName((String) data.get(DBManager.CollectionsPaths.PubFields.NAME));
+                    pub.setGeoLocation((GeoPoint) data.get(DBManager.CollectionsPaths.PubFields.GEOLOCATION));
+                    pub.setAverageAge(((Long) data.get(DBManager.CollectionsPaths.PubFields.AVG_AGE)).intValue());
+                    event.setPub(pub);
                     addItemToList(items, new EventItem(document.getId(), event), itemsDone, numItems, recyclerView);
                 }else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
-                    event.setPub("ERROR");
                 }
             }
         });
@@ -151,7 +154,6 @@ public class EventListFragment extends GeneralListFragment{// implements Firebas
     protected GeneralRecyclerViewAdapter getConcreteRecyclerViewAdapter(List<MyItem> items, FragmentActivity activity) {
         return new EventListRecyclerViewAdapter(items,activity);
     }
-
     /*private void backToHome(){
         Intent intent = new Intent(getContext(), MainActivity.class);
         intent.putExtra("dialog_str", "Sorry! It seems that the account's token was obsolete. Please, Login again with your account."); // so you can pass what activity you're coming from, if needed

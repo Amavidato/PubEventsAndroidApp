@@ -32,8 +32,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.amavidato.pubevents.R;
-import com.amavidato.pubevents.ui.pubs.list.PubListRecyclerViewAdapter;
-import com.amavidato.pubevents.ui.pubs.list.PubsListFragmentArgs;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,6 +45,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.amavidato.pubevents.ui.findpub.FindPubsFragment.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 
 public abstract class GeneralListFragment extends Fragment {
     private static final String TAG = GeneralListFragment.class.getSimpleName();
@@ -129,7 +129,7 @@ public abstract class GeneralListFragment extends Fragment {
             selected = selected.toUpperCase().replace("(","")
                     .replace(")","").replace(".","").replace(" ", "_");
             final String opt = sortOptions.valueOf(selected);
-            if(opt.equals(SortOptions.CLOSEST_TO_FARTHEST) || opt.equals(SortOptions.FARTHEST_TO_CLOSEST)){
+            if(opt.equals(SortOptions.PROXIMITY_NEAREST) || opt.equals(SortOptions.PROXIMITY_FURTHEST)){
                 onSortProximity(opt);
             }else{
                 recyclerAdapter.onSortOptSelected(opt,null);
@@ -197,6 +197,7 @@ public abstract class GeneralListFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     protected void onItemSortSelected(View view){
         if (view != null) {
             if (recyclerAdapter != null) {
@@ -204,7 +205,7 @@ public abstract class GeneralListFragment extends Fragment {
                 selected = selected.toUpperCase().replace("(","")
                         .replace(")","").replace(".","").replace(" ", "_");
                 final String opt = sortOptions.valueOf(selected);
-                if(opt.equals(SortOptions.CLOSEST_TO_FARTHEST) || opt.equals(SortOptions.FARTHEST_TO_CLOSEST)){
+                if(opt.equals(SortOptions.PROXIMITY_NEAREST) || opt.equals(SortOptions.PROXIMITY_FURTHEST)){
                     onSortProximity(opt);
                 }else{
                     recyclerAdapter.onSortOptSelected(opt,null);
@@ -214,12 +215,12 @@ public abstract class GeneralListFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     protected void onSortProximity(final String opt){
         if (ActivityCompat.checkSelfPermission(this.getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
+            this.getActivity().requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
@@ -272,7 +273,6 @@ public abstract class GeneralListFragment extends Fragment {
             recyclerView.addItemDecoration(divider);
             if(userDependentList){
                 //Query to retrieve pubs information
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String uid = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                 if(uid!=null) {
                     path = getUserDependedPathQueryList(uid);

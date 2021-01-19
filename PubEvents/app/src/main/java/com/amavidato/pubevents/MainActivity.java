@@ -1,5 +1,8 @@
 package com.amavidato.pubevents;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.amavidato.pubevents.utility.db.DBManager;
@@ -16,7 +19,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -42,6 +47,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Map;
+
+import static com.amavidato.pubevents.ui.findpub.FindPubsFragment.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 
 public class MainActivity extends AppCompatActivity {
 

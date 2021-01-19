@@ -1,12 +1,14 @@
 package com.amavidato.pubevents.utility.general_list_fragment;
 
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -111,4 +113,5 @@ public abstract class GeneralRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     protected abstract void customOnBindViewHolder(GeneralViewHolder holder, int position);
 
     protected abstract boolean customOnSortOptSelected(String opt, Location currentLoc, Location lastKnownLoc);
+
 }

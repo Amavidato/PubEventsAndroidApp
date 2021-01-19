@@ -16,7 +16,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.amavidato.pubevents.R;
-import com.amavidato.pubevents.ui.home.HomeFragment;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.MyFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -50,7 +49,7 @@ public class EventFragment extends MyFragment {
     private TextView event_maxCapacity;
     private TextView event_reservedSeats;
     private TextView event_type;
-    private TextView event_buyed_number;
+    private TextView event_bought_number;
     private TextView event_buy_price;
     private TextView event_buy_tot;
     private TextInputEditText event_buy_input;
@@ -79,7 +78,7 @@ public class EventFragment extends MyFragment {
         event_maxCapacity = root.findViewById(R.id.eventview_max_capacity);
         event_price = root.findViewById(R.id.eventview_price);
         event_type = root.findViewById(R.id.eventview_type);
-        event_buyed_number = root.findViewById(R.id.eventview_tickets_bought_number);
+        event_bought_number = root.findViewById(R.id.eventview_tickets_bought_number);
         event_buy_price = root.findViewById(R.id.eventview_buy_value_ticket);
         event_buy_tot = root.findViewById(R.id.eventview_buy_tot_value);
         event_buy_input = root.findViewById(R.id.eventview_buy_number);
@@ -87,19 +86,28 @@ public class EventFragment extends MyFragment {
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         if(uid!=null){
-            FirebaseFirestore.getInstance().document(DBManager.CollectionsPaths.USERS+"/"+uid
-                    +"/"+DBManager.CollectionsPaths.UserFields.ACQUIRED_EVENTS +"/"+eventID).get()
+            Log.d(TAG,  "USER_ID => " + uid);
+
+            FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.USERS)
+                    .document(uid)
+                    .collection(DBManager.CollectionsPaths.UserFields.ACQUIRED_EVENTS)
+                    .document(eventID)
+                    .get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if(task.isSuccessful()){
                                 Map<String,Object> data = task.getResult().getData();
                                 Log.d(TAG, task.getResult().getId() + " => " + data);
-                                Object tmp = data.get(DBManager.CollectionsPaths.UserFields.AcquiredEventsFields.TICKETS_BOUGHT);
-                                if(tmp instanceof Double){
-                                    event_buyed_number.setText(((Integer)((Double)tmp).intValue()).toString());
-                                }else if (tmp instanceof Long){
-                                    event_buyed_number.setText(((Integer)((Long)tmp).intValue()).toString());
+                                if(data != null){
+                                    Object tmp = data.get(DBManager.CollectionsPaths.UserFields.AcquiredEventsFields.TICKETS_BOUGHT);
+                                    if(tmp instanceof Double){
+                                        event_bought_number.setText(((Integer)((Double)tmp).intValue()).toString());
+                                    }else if (tmp instanceof Long){
+                                        event_bought_number.setText(((Integer)((Long)tmp).intValue()).toString());
+                                    }
+                                }else{
+                                    Log.d(TAG, "get bought tickets DATA NULL");
                                 }
                             }else{
 
@@ -136,28 +144,33 @@ public class EventFragment extends MyFragment {
                 if(task.isSuccessful()){
                     Map<String,Object> data = task.getResult().getData();
                     Log.d(TAG, task.getResult().getId() + " => " + data);
-                    event_name.setText((String) data.get(DBManager.CollectionsPaths.EventFields.NAME));
-                    event_pub.setText((String) data.get(DBManager.CollectionsPaths.EventFields.PUB));
-                    Date date = ((Timestamp)data.get(DBManager.CollectionsPaths.EventFields.DATE)).toDate();
-                    DateFormat formatterDate = new SimpleDateFormat("E, dd MMMM YYYY");
-                    DateFormat formatterTime = new SimpleDateFormat("HH:mm");
+                    if(data != null){
+                        event_name.setText((String) data.get(DBManager.CollectionsPaths.EventFields.NAME));
+                        event_pub.setText((String) data.get(DBManager.CollectionsPaths.EventFields.PUB));
+                        Date date = ((Timestamp)data.get(DBManager.CollectionsPaths.EventFields.DATE)).toDate();
+                        DateFormat formatterDate = new SimpleDateFormat("E, dd MMMM YYYY");
+                        DateFormat formatterTime = new SimpleDateFormat("HH:mm");
 
-                    event_date.setText(formatterDate.format(date));
-                    event_time.setText(formatterTime.format(date));
-                    event_reservedSeats.setText(((Long) data.get(DBManager.CollectionsPaths.EventFields.RESERVED_SEATS)).toString());
-                    event_maxCapacity.setText(((Long) data.get(DBManager.CollectionsPaths.EventFields.MAX_CAPACITY)).toString());
-                    Object pTmp = data.get(DBManager.CollectionsPaths.PubFields.OVERALL_RATING);
-                    if(pTmp instanceof Double){
-                        event_price.setText(((Double) data.get(DBManager.CollectionsPaths.EventFields.PRICE)).toString());
-                    }else{// if (pTmp instanceof Long){
-                        event_price.setText(((Long) data.get(DBManager.CollectionsPaths.EventFields.PRICE)).toString());
+                        event_date.setText(formatterDate.format(date));
+                        event_time.setText(formatterTime.format(date));
+                        event_reservedSeats.setText(((Long) data.get(DBManager.CollectionsPaths.EventFields.RESERVED_SEATS)).toString());
+                        event_maxCapacity.setText(((Long) data.get(DBManager.CollectionsPaths.EventFields.MAX_CAPACITY)).toString());
+                        Object pTmp = data.get(DBManager.CollectionsPaths.PubFields.OVERALL_RATING);
+                        if(pTmp instanceof Double){
+                            event_price.setText(((Double) data.get(DBManager.CollectionsPaths.EventFields.PRICE)).toString());
+                        }else{// if (pTmp instanceof Long){
+                            event_price.setText(((Long) data.get(DBManager.CollectionsPaths.EventFields.PRICE)).toString());
+                        }
+                        event_type.setText((String) data.get(DBManager.CollectionsPaths.EventFields.TYPE));
+
+                        event_buy_price.setText(event_price.getText());
+                        String toBuy = event_buy_input.getText().toString();
+                        Double tot = Double.parseDouble((String) event_price.getText()) * Double.parseDouble( toBuy.isEmpty() ? "0" : toBuy);
+                        event_buy_tot.setText(tot.toString());
+                    }else{
+                        Log.d(TAG, "get event DATA NULL");
                     }
-                    event_type.setText((String) data.get(DBManager.CollectionsPaths.EventFields.TYPE));
 
-                    event_buy_price.setText(event_price.getText());
-                    String toBuy = event_buy_input.getText().toString();
-                    Double tot = Double.parseDouble((String) event_price.getText()) * Double.parseDouble( toBuy.isEmpty() ? "0" : toBuy);
-                    event_buy_tot.setText(tot.toString());
                 }else{
 
                 }

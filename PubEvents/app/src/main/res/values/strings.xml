@@ -61,29 +61,27 @@
         <item>Name (Desc)</item>
         <item>City name (Asc)</item>
         <item>City name (Desc)</item>
-        <item>Closest to Farthest</item>
-        <item>Farthest to Closest</item>
+        <item>Proximity (Nearest)</item>
+        <item>Proximity (Furthest)</item>
         <item>Overall Rate (Asc)</item>
         <item>Overall Rate (Desc)</item>
         <item>Price (Asc)</item>
         <item>Price (Desc)</item>
         <item>Avg. age (Asc)</item>
         <item>Avg. age (Desc)</item>
-        <item></item>
     </string-array>
 
     <string-array name="sort_options_events">
         <item>Name (Asc)</item>
         <item>Name (Desc)</item>
+        <item>Date (Nearest)</item>
+        <item>Date (Furthest)</item>
         <item>Pub name (Asc)</item>
         <item>Pub name (Desc)</item>
-        <item>City name (Asc)</item>
-        <item>City name (Desc)</item>
-        <item>Closest to Farthest</item>
-        <item>Farthest to Closest</item>
+        <item>Proximity (Nearest)</item>
+        <item>Proximity (Furthest)</item>
         <item>Price (Asc)</item>
         <item>Price (Desc)</item>
-        <item></item>
     </string-array>
 
     <string-array name="Rating_values">

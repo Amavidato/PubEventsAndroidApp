@@ -5,7 +5,7 @@ import java.util.Date;
 public class Event implements ModelObj {
     private String name;
     private Date date;
-    private String pub;
+    private Pub pub;
     private double price;
     private int max_capacity;
     private int reserved_seats;
@@ -13,12 +13,13 @@ public class Event implements ModelObj {
     private EventType type;
 
     public Event() {
-        this.name = this.pub = "";
+        this.name = "";
+        this.pub = null;
         this.price = max_capacity = reserved_seats = 0;
         this.type = EventType.NONE;
     }
 
-    public Event(String name, Date date, String pub, float price, int max_capacity, int reserved_seats, EventType type) {
+    public Event(String name, Date date, Pub pub, float price, int max_capacity, int reserved_seats, EventType type) {
         this.name = name;
         this.date = date;
         this.pub = pub;
@@ -44,11 +45,11 @@ public class Event implements ModelObj {
         this.date = date;
     }
 
-    public String getPub() {
+    public Pub getPub() {
         return pub;
     }
 
-    public void setPub(String pub) {
+    public void setPub(Pub pub) {
         this.pub = pub;
     }
 
