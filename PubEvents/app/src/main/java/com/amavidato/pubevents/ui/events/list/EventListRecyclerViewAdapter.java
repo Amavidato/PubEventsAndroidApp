@@ -10,9 +10,9 @@ import androidx.navigation.Navigation;
 
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Event;
-import com.amavidato.pubevents.utility.general_list_fragment.GeneralRecyclerViewAdapter;
-import com.amavidato.pubevents.utility.general_list_fragment.GeneralViewHolder;
-import com.amavidato.pubevents.utility.general_list_fragment.MyItem;
+import com.amavidato.pubevents.utility.list_abstract_classes.GeneralRecyclerViewAdapter;
+import com.amavidato.pubevents.utility.list_abstract_classes.GeneralViewHolder;
+import com.amavidato.pubevents.utility.list_abstract_classes.MyItem;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.Collections;
@@ -106,7 +106,7 @@ public class EventListRecyclerViewAdapter extends GeneralRecyclerViewAdapter {
                     Collections.sort(toShow, new Comparator<MyItem>() {
                         @Override
                         public int compare(MyItem item, MyItem t1) {
-                            return ((Event)item.object).getDate().compareTo(((Event)t1.object).getDate());
+                            return ((Event)item.object).getFullDate().compareTo(((Event)t1.object).getFullDate());
                         }
                     });
                     break;
@@ -114,7 +114,7 @@ public class EventListRecyclerViewAdapter extends GeneralRecyclerViewAdapter {
                     Collections.sort(toShow, new Comparator<MyItem>() {
                         @Override
                         public int compare(MyItem item, MyItem t1) {
-                            return ((Event)t1.object).getDate().compareTo(((Event)item.object).getDate());
+                            return ((Event)t1.object).getFullDate().compareTo(((Event)item.object).getFullDate());
                         }
                     });
                     break;

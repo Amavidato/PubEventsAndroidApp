@@ -1,28 +1,22 @@
-package com.amavidato.pubevents.utility.general_list_fragment;
+package com.amavidato.pubevents.utility.list_abstract_classes;
 
 import android.app.Activity;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.util.Log;
-import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 
-public abstract class GeneralRecyclerViewAdapter extends RecyclerView.Adapter<GeneralViewHolder> implements Filterable {
+public abstract class GeneralRecyclerViewAdapter extends SimpleRecyclerViewAdapter implements Filterable {
 
     private static final String TAG = GeneralRecyclerViewAdapter.class.getSimpleName();
 
-    protected final List<MyItem> all;
     protected final List<MyItem> toShow;
-    protected final Activity mActivity;
+
     protected String currentFilterString;
     protected Location lastKnownLoc;
     protected String selectedFilterOpt;
@@ -35,9 +29,9 @@ public abstract class GeneralRecyclerViewAdapter extends RecyclerView.Adapter<Ge
             List<MyItem> filtered = new ArrayList<>();
             currentFilterString = charSequence.toString();
             if(currentFilterString.isEmpty()){
-                filtered.addAll(all);
+                filtered.addAll(allItems);
             }else{
-                for(MyItem item : all){
+                for(MyItem item : allItems){
                     String lc = currentFilterString.toLowerCase();
                     searchForFilteringResults(filtered,item,selectedFilterOpt,lc);
                 }
@@ -50,26 +44,15 @@ public abstract class GeneralRecyclerViewAdapter extends RecyclerView.Adapter<Ge
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             toShow.clear();
             toShow.addAll((Collection<? extends MyItem>) filterResults.values);
-            Log.d("PUBLISH FILTER","filterResult:"+filterResults.values+"\nresults:ALL"+all+"\nTO SHOW"+toShow);
+            Log.d("PUBLISH FILTER","filterResult:"+filterResults.values+"\nresults:ALL"+allItems+"\nTO SHOW"+toShow);
             onSortOptSelected(selectedSortOpt,lastKnownLoc);
             notifyDataSetChanged();
         }
     };
 
     public GeneralRecyclerViewAdapter(List<MyItem> items, Activity activity) {
+        super(items,activity);
         toShow =  items;
-        all = new ArrayList<>(items);
-        mActivity = activity;
-    }
-
-    @Override
-    public GeneralViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return customOnCreateViewHolder(parent, viewType);
-    }
-
-    @Override
-    public void onBindViewHolder(final GeneralViewHolder holder, int position) {
-        customOnBindViewHolder(holder,position);
     }
 
     protected abstract void searchForFilteringResults(List<MyItem> filtered, MyItem item, String selectedFilterOpt, String lc);
@@ -107,10 +90,6 @@ public abstract class GeneralRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     public void setCurrentFilterString(String currentFilterString) {
         this.currentFilterString = currentFilterString;
     }
-
-    protected abstract GeneralViewHolder customOnCreateViewHolder(ViewGroup parent, int viewType);
-
-    protected abstract void customOnBindViewHolder(GeneralViewHolder holder, int position);
 
     protected abstract boolean customOnSortOptSelected(String opt, Location currentLoc, Location lastKnownLoc);
 

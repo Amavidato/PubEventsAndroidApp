@@ -1,6 +1,6 @@
 package com.amavidato.pubevents.ui.pubs.list;
 
-import com.amavidato.pubevents.utility.general_list_fragment.FilterOptions;
+import com.amavidato.pubevents.utility.list_abstract_classes.FilterOptions;
 
 public class FilterOptionsPub implements FilterOptions {
 

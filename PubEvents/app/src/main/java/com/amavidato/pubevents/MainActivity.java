@@ -100,19 +100,21 @@ public class MainActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<GetTokenResult> task) {
                                     if (task.isSuccessful()) {
                                         String idToken = task.getResult().getToken();
-                                        Log.d(MainActivity.TAG, "TOKEN EXISTS:"+idToken);
                                         username[0] = mUser.getDisplayName();
+                                        Log.d(MainActivity.TAG, "TOKEN EXISTS. Username:"+username[0]);
                                         // Send token to your backend via HTTPS
                                         // ...
                                     } else {
                                         Log.d(MainActivity.TAG, "TOKEN DOESN'T EXISTS");
                                         // Handle error -> task.getException();
                                     }
-                                    setUI(username[0]);
+                                    updateUI(mUser);
+                                    //setUI(username[0]);
                                 }
                             });
                 }else{
-                    setUI(username[0]);
+                    updateUI(null);
+                    //setUI(username[0]);
                 }
 
                 /*FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -176,6 +178,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         itemLogin = menuView.findItem(R.id.nav_login);
+        /*itemLogin.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                finish();
+                return false;
+            }
+        });*/
 
     }
 
@@ -197,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //updateUI(FirebaseAuth.getInstance().getCurrentUser());
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
         //GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -232,6 +242,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (document.exists()) {
                                     Map<String, Object> data = document.getData();
                                     username = (String) data.get(DBManager.CollectionsPaths.UserFields.USERNAME);
+                                    Log.d(TAG, "USERNAME FROM DATA:"+username);
                                     setUI(username);
                                     //navUsername.setText(username);
                                     Log.d(TAG, "DocumentSnapshot data: " + data + " currUs:"+currentUser);
@@ -248,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
             }else if(currentUser instanceof GoogleSignInAccount){
-                Log.d(TAG, FirebaseAuth.getInstance().getCurrentUser().toString());
+                Log.d(TAG, "Current google user:"+FirebaseAuth.getInstance().getCurrentUser().toString());
                 username = ((GoogleSignInAccount) currentUser).getDisplayName();
                 setUI(username);
             }
@@ -263,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUI(String username){
         boolean validUser = username != null && username != "";
+        Log.d(TAG,"USERNAME SET UI:"+username+"** valid:"+validUser+"**");
         navUsername.setText(validUser ? username :"Guest");
         itemFollowedPubs.setVisible(validUser);
         itemInterestEvents.setVisible(validUser);
@@ -288,5 +300,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG,"ON RESUME");
+        super.onResume();
     }
 }

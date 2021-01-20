@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amavidato.pubevents.MainActivity;
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.ui.account.AccountFormState;
 import com.amavidato.pubevents.ui.account.AccountFormViewModel;
@@ -134,6 +135,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     if(isEmailVerified){
                                         // Sign in success, update UI with the signed-in user's information
                                         Log.d(TAG, "signInWithEmail:success");
+                                        //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        //startActivity(intent);
                                         finish();
                                     }else{
                                         Log.w(TAG, "signInWithEmail:failure (email not verified)", task.getException());

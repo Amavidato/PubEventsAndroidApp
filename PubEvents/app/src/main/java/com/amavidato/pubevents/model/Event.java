@@ -1,5 +1,7 @@
 package com.amavidato.pubevents.model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Event implements ModelObj {
@@ -37,8 +39,23 @@ public class Event implements ModelObj {
         this.name = name;
     }
 
-    public Date getDate() {
+    public Date getFullDate() {
         return date;
+    }
+
+    public String getDateStr(){
+        DateFormat formatterDate = new SimpleDateFormat("E, dd MMMM YYYY");
+        return formatterDate.format(date);
+    }
+
+    public String getDateStrShort(){
+        DateFormat formatterDate = new SimpleDateFormat("dd MMM");
+        return formatterDate.format(date);
+    }
+
+    public String getTimeStr(){
+        DateFormat formatterTime = new SimpleDateFormat("HH:mm");
+        return formatterTime.format(date);
     }
 
     public void setDate(Date date) {
@@ -83,6 +100,9 @@ public class Event implements ModelObj {
         }
     }
 
+    public String getSeatsStr(){
+        return reserved_seats+"/"+max_capacity;
+    }
     public int getAvailableSeats(){
         return max_capacity - reserved_seats;
     }

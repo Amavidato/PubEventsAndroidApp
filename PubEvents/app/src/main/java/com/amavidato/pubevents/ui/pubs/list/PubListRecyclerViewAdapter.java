@@ -10,17 +10,17 @@ import android.view.ViewGroup;
 
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Pub;
-import com.amavidato.pubevents.utility.general_list_fragment.GeneralRecyclerViewAdapter;
-import com.amavidato.pubevents.utility.general_list_fragment.GeneralViewHolder;
-import com.amavidato.pubevents.utility.general_list_fragment.MyItem;
+import com.amavidato.pubevents.utility.list_abstract_classes.GeneralRecyclerViewAdapter;
+import com.amavidato.pubevents.utility.list_abstract_classes.GeneralViewHolder;
+import com.amavidato.pubevents.utility.list_abstract_classes.MyItem;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.amavidato.pubevents.utility.general_list_fragment.SortOptions.PROXIMITY_NEAREST;
-import static com.amavidato.pubevents.utility.general_list_fragment.SortOptions.PROXIMITY_FURTHEST;
+import static com.amavidato.pubevents.utility.list_abstract_classes.SortOptions.PROXIMITY_NEAREST;
+import static com.amavidato.pubevents.utility.list_abstract_classes.SortOptions.PROXIMITY_FURTHEST;
 
 public class PubListRecyclerViewAdapter extends GeneralRecyclerViewAdapter {
     private static final String TAG = PubListRecyclerViewAdapter.class.getSimpleName();

@@ -1,49 +1,27 @@
 package com.amavidato.pubevents.ui.events.list;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.amavidato.pubevents.MainActivity;
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Event;
 import com.amavidato.pubevents.model.Pub;
-import com.amavidato.pubevents.ui.home.HomeFragment;
-import com.amavidato.pubevents.ui.pubs.list.FilterOptionsPub;
-import com.amavidato.pubevents.ui.pubs.list.PubItem;
-import com.amavidato.pubevents.utility.MyFragment;
 import com.amavidato.pubevents.utility.db.DBManager;
-import com.amavidato.pubevents.utility.general_list_fragment.GeneralListFragment;
-import com.amavidato.pubevents.utility.general_list_fragment.GeneralRecyclerViewAdapter;
-import com.amavidato.pubevents.utility.general_list_fragment.MyItem;
+import com.amavidato.pubevents.utility.list_abstract_classes.GeneralListFragment;
+import com.amavidato.pubevents.utility.list_abstract_classes.GeneralRecyclerViewAdapter;
+import com.amavidato.pubevents.utility.list_abstract_classes.MyItem;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 

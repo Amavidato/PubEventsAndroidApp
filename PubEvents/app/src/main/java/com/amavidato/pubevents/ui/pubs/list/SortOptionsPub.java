@@ -1,6 +1,6 @@
 package com.amavidato.pubevents.ui.pubs.list;
 
-import com.amavidato.pubevents.utility.general_list_fragment.SortOptions;
+import com.amavidato.pubevents.utility.list_abstract_classes.SortOptions;
 
 public class SortOptionsPub implements SortOptions {
 

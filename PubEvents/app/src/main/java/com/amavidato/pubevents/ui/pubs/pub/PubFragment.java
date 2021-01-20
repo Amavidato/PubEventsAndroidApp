@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -25,20 +26,26 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.amavidato.pubevents.R;
+import com.amavidato.pubevents.model.Event;
 import com.amavidato.pubevents.model.Pub;
 import com.amavidato.pubevents.model.Rating;
+import com.amavidato.pubevents.ui.events.list.EventItem;
+import com.amavidato.pubevents.ui.pubs.pub.events.PubEventsListRecyclerViewAdapter;
 import com.amavidato.pubevents.ui.pubs.pub.ratings.RatingItem;
 import com.amavidato.pubevents.ui.pubs.pub.ratings.RatingsListRecyclerViewAdapter;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.MyFragment;
+import com.amavidato.pubevents.utility.list_abstract_classes.MyItem;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -66,9 +73,12 @@ public class PubFragment extends MyFragment {
     private AppCompatButton btn_open_ratings;
     private ProgressBar progressBar;
     private ConstraintLayout containerLayout;
-    private RatingsListRecyclerViewAdapter recyclerAdapter;
+    private RatingsListRecyclerViewAdapter ratingsRecyclerAdapter;
+    private PubEventsListRecyclerViewAdapter eventsRecyclerAdapter;
     private ConstraintLayout ratingsLayoutContainer;
+    private ConstraintLayout eventsLayoutContainer;
     private ConstraintLayout pubContainerRatings;
+    private ConstraintLayout pubContainerEvents;
     private ConstraintLayout pubContainerRatingForm;
     private AppCompatButton btn_add_rating;
 
@@ -192,7 +202,10 @@ public class PubFragment extends MyFragment {
         progressBar = root.findViewById(R.id.pub_loading_list_progressBar);
         containerLayout = root.findViewById(R.id.pub_fragment_layout_container);
         pubContainerRatings = root.findViewById(R.id.pub_container_ratings);
+        pubContainerEvents = root.findViewById(R.id.pub_container_events);
         pubContainerRatingForm = root.findViewById(R.id.pubview_container_rating_form);
+
+        createEventsList();
 
         FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.PUBS).document(pubID).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -381,7 +394,7 @@ public class PubFragment extends MyFragment {
 
             DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(),DividerItemDecoration.VERTICAL);
             recyclerView.addItemDecoration(divider);
-            final List<RatingItem> ratings = new ArrayList<>();
+            final List<MyItem> ratings = new ArrayList<>();
             //Query to retrieve ratings information
 
             FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.PUBS).document(pubID).collection(DBManager.CollectionsPaths.PubFields.RATINGS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -399,11 +412,11 @@ public class PubFragment extends MyFragment {
                             rating.setEmail((String)data.get(DBManager.CollectionsPaths.PubFields.Ratings.EMAIL));
                             rating.setComment((String)data.get(DBManager.CollectionsPaths.PubFields.Ratings.COMMENT));
 
-                            ratings.add(new RatingItem(rating));
+                            ratings.add(new RatingItem(document.getId(),rating));
                         }
                         progressBar.setVisibility(View.INVISIBLE);
-                        recyclerAdapter = new RatingsListRecyclerViewAdapter(ratings);
-                        recyclerView.setAdapter(recyclerAdapter);
+                        ratingsRecyclerAdapter = new RatingsListRecyclerViewAdapter(ratings,getActivity());
+                        recyclerView.setAdapter(ratingsRecyclerAdapter);
 
                         if(FirebaseAuth.getInstance().getCurrentUser()==null){
                             pubContainerRatingForm.setVisibility(View.GONE);
@@ -412,6 +425,103 @@ public class PubFragment extends MyFragment {
                         }
                         pubContainerRatings.addView(ratingsLayoutContainer);
 
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                        Toast.makeText(context,"Error getting pub list from database.\n Please check your connection and try again.",Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
+    }
+
+    private void createEventsList(){
+        progressBar.setVisibility(View.VISIBLE);
+        //ratingsLayoutContainer = (ConstraintLayout) View.inflate(this.getContext(),R.layout.pub_ratings_list, (ViewGroup) getView());
+        eventsLayoutContainer = (ConstraintLayout) getLayoutInflater().inflate(R.layout.pub_events_list, null);
+
+        // Set the adapter
+        View listView = eventsLayoutContainer.findViewById(R.id.pub_events);
+        if (listView instanceof RecyclerView) {
+            final Context context = listView.getContext();
+            final RecyclerView recyclerView = (RecyclerView) listView;
+
+            DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(),DividerItemDecoration.HORIZONTAL);
+            recyclerView.addItemDecoration(divider);
+            final List<MyItem> events = new ArrayList<>();
+            //Query to retrieve ratings information
+
+            FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.EVENTS)
+                    .whereEqualTo(DBManager.CollectionsPaths.EventFields.PUB,pubID)
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @RequiresApi(api = Build.VERSION_CODES.N)
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (final QueryDocumentSnapshot document : task.getResult()) {
+                            Map<String, Object> data = document.getData();
+                            Log.d(TAG, document.getId() + " => " + data);
+                            final int numItems = task.getResult().size();
+                            final int[] itemsDone = {0};
+
+                            final Event event = new Event();
+                            String stmp = (String)data.get(DBManager.CollectionsPaths.EventFields.NAME);
+                            event.setName(stmp != null ? stmp : "NULL");
+
+                            Timestamp ttmp = (Timestamp) data.get(DBManager.CollectionsPaths.EventFields.DATE);
+                            event.setDate(ttmp != null ? ttmp.toDate() : null);
+
+                            Object ptmp = data.get(DBManager.CollectionsPaths.EventFields.PRICE);
+                            Double price = null;
+                            if(ptmp != null){
+                                if(ptmp instanceof Double){
+                                    price = (Double)ptmp;
+                                }else {//if (eTmp instanceof Long){
+                                    price = ((Long)ptmp).doubleValue();
+                                }
+                            }
+                            event.setPrice(price);
+
+                            stmp = (String) data.get(DBManager.CollectionsPaths.EventFields.TYPE);
+                            stmp = stmp != null ? stmp : "NULL";
+                            event.setType(Event.EventType.valueOf(stmp.toUpperCase()));
+
+                            Long ltmp = (Long)data.get(DBManager.CollectionsPaths.EventFields.MAX_CAPACITY);
+                            event.setMax_capacity(ltmp != null ? ltmp.intValue() : null);
+
+                            ltmp = (Long)data.get(DBManager.CollectionsPaths.EventFields.RESERVED_SEATS);
+                            //ltmp = ltmp != null ? ltmp : new Long(0);
+                            event.setReserved_seats(ltmp.intValue());
+
+
+                            final String pubID = (String)data.get(DBManager.CollectionsPaths.EventFields.PUB);
+                            FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.PUBS)
+                                    .document(pubID)
+                                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful()){
+                                        Map<String, Object> data = task.getResult().getData();
+                                        Log.d(TAG, task.getResult().getId() + " => " + data);
+
+                                        final Pub pub = new Pub();
+                                        pub.setName((String) data.get(DBManager.CollectionsPaths.PubFields.NAME));
+                                        pub.setGeoLocation((GeoPoint) data.get(DBManager.CollectionsPaths.PubFields.GEOLOCATION));
+                                        pub.setAverageAge(((Long) data.get(DBManager.CollectionsPaths.PubFields.AVG_AGE)).intValue());
+                                        event.setPub(pub);
+                                        events.add(new EventItem(document.getId() ,event));
+                                        itemsDone[0]++;
+                                        if (itemsDone[0] == numItems) {
+                                            progressBar.setVisibility(View.INVISIBLE);
+                                            eventsRecyclerAdapter = new PubEventsListRecyclerViewAdapter(events,getActivity());
+                                            recyclerView.setAdapter(eventsRecyclerAdapter);
+                                            pubContainerEvents.addView(eventsLayoutContainer);
+                                        }
+                                    }else {
+                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                    }
+                                }
+                            });
+                        }
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                         Toast.makeText(context,"Error getting pub list from database.\n Please check your connection and try again.",Toast.LENGTH_LONG).show();

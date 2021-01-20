@@ -1,7 +1,7 @@
 package com.amavidato.pubevents.ui.events.list;
 
 import com.amavidato.pubevents.model.Event;
-import com.amavidato.pubevents.utility.general_list_fragment.MyItem;
+import com.amavidato.pubevents.utility.list_abstract_classes.MyItem;
 import com.google.gson.Gson;
 
 public class EventItem extends MyItem {

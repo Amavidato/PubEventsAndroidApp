@@ -197,12 +197,20 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/pub_container_rating_form"
+                android:id="@+id/pub_container_events"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/pub_otherinfo_container"
-                app:layout_constraintStart_toStartOf="@+id/pub_otherinfo_container"
-                app:layout_constraintEnd_toEndOf="@+id/pub_otherinfo_container">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/pub_container_rating_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/pub_container_events"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/pub_btn_open_ratings"

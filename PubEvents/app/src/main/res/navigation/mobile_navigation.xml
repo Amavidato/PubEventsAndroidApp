@@ -76,6 +76,9 @@
         <argument
             android:name="@string/pub_id"
             app:argType="string"/>
+        <action
+            android:id="@+id/action_open_eventFragment"
+            app:destination="@id/eventFragment" />
     </fragment>
 
     <fragment

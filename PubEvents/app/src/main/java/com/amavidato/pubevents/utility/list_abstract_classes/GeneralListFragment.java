@@ -1,4 +1,4 @@
-package com.amavidato.pubevents.utility.general_list_fragment;
+package com.amavidato.pubevents.utility.list_abstract_classes;
 
 import android.Manifest;
 import android.content.Context;
@@ -38,7 +38,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;

@@ -1,8 +1,6 @@
 package com.amavidato.pubevents.ui.events.list;
 
-import android.util.Log;
-
-import com.amavidato.pubevents.utility.general_list_fragment.FilterOptions;
+import com.amavidato.pubevents.utility.list_abstract_classes.FilterOptions;
 
 public class FilterOptionsEvent implements FilterOptions {
 

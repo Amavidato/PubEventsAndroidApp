@@ -6,7 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amavidato.pubevents.R;
-import com.amavidato.pubevents.utility.general_list_fragment.GeneralViewHolder;
+import com.amavidato.pubevents.utility.list_abstract_classes.GeneralViewHolder;
 
 public class PubViewHolder extends GeneralViewHolder {
     public final ImageView mImgView;

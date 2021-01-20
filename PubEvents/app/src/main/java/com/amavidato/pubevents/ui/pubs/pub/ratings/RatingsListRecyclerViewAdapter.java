@@ -1,64 +1,42 @@
 package com.amavidato.pubevents.ui.pubs.pub.ratings;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.amavidato.pubevents.R;
+import com.amavidato.pubevents.model.Rating;
+import com.amavidato.pubevents.ui.pubs.pub.events.PubEventsListRecyclerViewAdapter;
+import com.amavidato.pubevents.utility.list_abstract_classes.SimpleRecyclerViewAdapter;
+import com.amavidato.pubevents.utility.list_abstract_classes.GeneralViewHolder;
+import com.amavidato.pubevents.utility.list_abstract_classes.MyItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class RatingsListRecyclerViewAdapter extends RecyclerView.Adapter<RatingsListRecyclerViewAdapter.ViewHolder>{
+public class RatingsListRecyclerViewAdapter extends SimpleRecyclerViewAdapter {
 
-    private final List<RatingItem> allRating;
+    private static final String TAG = PubEventsListRecyclerViewAdapter.class.getSimpleName();
 
-    public RatingsListRecyclerViewAdapter(List<RatingItem> items) {
-        allRating = new ArrayList<>(items);
+    public RatingsListRecyclerViewAdapter(List<MyItem> ratingItems, Activity activity) {
+        super(ratingItems, activity);
     }
 
     @Override
-    public RatingsListRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    protected GeneralViewHolder customOnCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.rating_template, parent, false);
-        return new RatingsListRecyclerViewAdapter.ViewHolder(view);
+        return new RatingViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final RatingsListRecyclerViewAdapter.ViewHolder holder, int position) {
-        holder.mItem = allRating.get(position);
-        holder.mImgView.setImageResource(R.drawable.ic_menu_gallery);
-        holder.mNameView.setText(allRating.get(position).rating.getUser());
-        holder.mValueView.setText(((Integer)allRating.get(position).rating.getValue()).toString());
-        holder.mCommentView.setText(allRating.get(position).rating.getComment());
+    protected void customOnBindViewHolder(GeneralViewHolder holder, int position) {
+        RatingViewHolder tmp = (RatingViewHolder) holder;
+        tmp.mImgView.setImageResource(R.drawable.ic_menu_gallery);
+        Rating rating = (Rating) allItems.get(position).object;
+        tmp.mNameView.setText(rating.getUser());
+        tmp.mValueView.setText(((Integer)rating.getValue()).toString());
+        tmp.mCommentView.setText(rating.getComment());
     }
 
-    @Override
-    public int getItemCount() {
-        return allRating.size();
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final ImageView mImgView;
-        public final TextView mNameView;
-        public final TextView mValueView;
-        public final TextView mCommentView;
-
-        public RatingItem mItem;
-
-        public ViewHolder(View view) {
-            super(view);
-            mView = view;
-            mImgView = (ImageView) view.findViewById(R.id.rating_user_img);
-            mNameView = view.findViewById(R.id.rating_user_name);
-            mValueView = view.findViewById(R.id.rating_user_value);
-            mCommentView = view.findViewById(R.id.rating_user_comment);
-        }
-
-    }
 }

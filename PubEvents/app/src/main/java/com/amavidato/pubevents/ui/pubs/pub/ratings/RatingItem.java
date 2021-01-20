@@ -1,23 +1,17 @@
 package com.amavidato.pubevents.ui.pubs.pub.ratings;
 
 import com.amavidato.pubevents.model.Rating;
-import com.amavidato.pubevents.ui.pubs.list.PubItem;
+import com.amavidato.pubevents.utility.list_abstract_classes.MyItem;
 import com.google.gson.Gson;
 
-public class RatingItem {
-    public final Rating rating;
+public class RatingItem extends MyItem {
 
-    public RatingItem(Rating rating) {
-        this.rating = rating;
+    public RatingItem(String id, Rating rating) {
+        super(id,rating);
     }
 
-    @Override
-    public String toString() {
-        return new Gson().toJson(this);
-    }
-
-    public static PubItem decodeStrToObj(String obj){
-        return new Gson().fromJson(obj, PubItem.class);
+    public RatingItem decodeStrToObj(String obj){
+        return new Gson().fromJson(obj, RatingItem.class);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.amavidato.pubevents.ui.events.list;
 
-public class SortOptionsEvent implements com.amavidato.pubevents.utility.general_list_fragment.SortOptions {
+public class SortOptionsEvent implements com.amavidato.pubevents.utility.list_abstract_classes.SortOptions {
 
     public static final String NAME_ASC = "NAME_ASC";
     public static final String NAME_DESC = "NAME_DESC";
