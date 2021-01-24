@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="4dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/pub_item_image"
+            android:layout_width="150dp"
+            android:layout_height="125dp"
+            android:background="@drawable/ic_menu_gallery"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            app:layout_constraintStart_toStartOf="@id/pub_item_image"
+            app:layout_constraintTop_toTopOf="@id/pub_item_image"
+            android:layout_marginTop="4dp"
+            app:cardCornerRadius="50dp"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="#FFFFFF">
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/cardview_pub_rating_img"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        app:srcCompat="@drawable/ic_baseline_star_24"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/pub_item_rating_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5"
+                        android:textSize="18dp"
+                        android:textStyle="bold"
+                        android:layout_marginRight="4dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/cardview_pub_rating_img"
+                        app:layout_constraintTop_toTopOf="@id/cardview_pub_rating_img"
+                        app:layout_constraintBottom_toBottomOf="@id/cardview_pub_rating_img"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            app:layout_constraintEnd_toEndOf="@id/pub_item_image"
+            app:layout_constraintBottom_toBottomOf="@id/pub_item_image"
+            android:layout_marginBottom="10dp"
+            app:cardCornerRadius="50dp"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/pub_item_price_1"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        app:srcCompat="@drawable/ic_price_24"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+                    <ImageView
+                        android:id="@+id/pub_item_price_2"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        app:srcCompat="@drawable/ic_price_24"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toEndOf="@id/pub_item_price_1"
+                        app:layout_constraintTop_toTopOf="@id/pub_item_price_1"
+                        app:layout_constraintBottom_toBottomOf="@id/pub_item_price_1"/>
+
+                    <ImageView
+                        android:id="@+id/pub_item_price_3"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        app:srcCompat="@drawable/ic_price_24"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toEndOf="@id/pub_item_price_2"
+                        app:layout_constraintTop_toTopOf="@id/pub_item_price_2"
+                        app:layout_constraintBottom_toBottomOf="@id/pub_item_price_2"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/pub_item_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pub Name"
+            android:textSize="12dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+            android:id="@+id/cardview_pub_geopoint_img"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            app:srcCompat="@drawable/ic_geopoint_24"
+            app:layout_constraintStart_toStartOf="@id/pub_item_name"
+            app:layout_constraintTop_toBottomOf="@+id/pub_item_name"/>
+
+        <TextView
+            android:id="@+id/pub_item_city"
+            android:layout_width="136dp"
+            android:layout_height="wrap_content"
+            android:text="City"
+            android:textSize="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintStart_toEndOf="@id/cardview_pub_geopoint_img"
+            app:layout_constraintTop_toTopOf="@id/cardview_pub_geopoint_img"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

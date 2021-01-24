@@ -12,10 +12,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.amavidato.pubevents.R;
+import com.amavidato.pubevents.utility.AccountManager;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.MyFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,6 +27,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -55,6 +58,7 @@ public class EventFragment extends MyFragment {
     private TextInputEditText event_buy_input;
     private Button event_buy_btn;
 
+    private ConstraintLayout ticketsInfoUserContainerLayout;
 
     public EventFragment() {}
 
@@ -83,9 +87,13 @@ public class EventFragment extends MyFragment {
         event_buy_tot = root.findViewById(R.id.eventview_buy_tot_value);
         event_buy_input = root.findViewById(R.id.eventview_buy_number);
         event_buy_btn = root.findViewById(R.id.eventview_buy_btn);
+        ticketsInfoUserContainerLayout = root.findViewById(R.id.eventview_tickets_info_user);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        if(uid!=null){
+        if(AccountManager.isCurrentUserValid()){
+            ticketsInfoUserContainerLayout.setVisibility(View.VISIBLE);
+
+            String uid = user.getEmail();
             Log.d(TAG,  "USER_ID => " + uid);
 
             FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.USERS)
@@ -114,6 +122,8 @@ public class EventFragment extends MyFragment {
                             }
                         }
                     });
+        }else{
+            ticketsInfoUserContainerLayout.setVisibility(View.GONE);
         }
 
         event_buy_input.addTextChangedListener(new TextWatcher() {
@@ -227,15 +237,21 @@ public class EventFragment extends MyFragment {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         Map<String, Object> data = task.getResult().getData();
-                        Object tmp = data.get(DBManager.CollectionsPaths.UserFields.AcquiredEventsFields.TICKETS_BOUGHT);
-                        Integer tickets = null;
-                        if (tmp instanceof Double) {
-                            tickets = ((Double) tmp).intValue();
-                        } else if (tmp instanceof Long) {
-                            tickets = ((Long) tmp).intValue();
-                        }
-                        if (tickets == null) {
-                            tickets = 0;
+                        Log.d(TAG, task.getResult().getId() + " => " + data);
+
+                        Integer tickets = 0;
+                        if(data != null){
+                            Object tmp = data.get(DBManager.CollectionsPaths.UserFields.AcquiredEventsFields.TICKETS_BOUGHT);
+                            if (tmp instanceof Double) {
+                                tickets = ((Double) tmp).intValue();
+                            } else if (tmp instanceof Long) {
+                                tickets = ((Long) tmp).intValue();
+                            }
+                            if (tickets == null) {
+                                tickets = 0;
+                            }
+                        }else{
+                            data = new HashMap<>();
                         }
                         data.put(DBManager.CollectionsPaths.UserFields.AcquiredEventsFields.TICKETS_BOUGHT, tickets + toBuy);
                         FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.USERS)

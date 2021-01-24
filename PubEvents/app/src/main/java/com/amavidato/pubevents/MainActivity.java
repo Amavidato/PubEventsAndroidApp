@@ -23,6 +23,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String dialogStr;
+        final String dialogStr;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             dialogStr= (String) savedInstanceState.getSerializable("dialog_str");
             Log.d(TAG, "SIS NOT NULL. DialSTR: "+dialogStr);
         }
-        openDialog(dialogStr);
+        //openDialog(dialogStr);
         setContentView(R.layout.activity_main);
 
         // Initialize Firebase Auth
@@ -104,11 +105,17 @@ public class MainActivity extends AppCompatActivity {
                                         Log.d(MainActivity.TAG, "TOKEN EXISTS. Username:"+username[0]);
                                         // Send token to your backend via HTTPS
                                         // ...
+                                        if(FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()){
+                                            updateUI(mUser);
+                                            return;
+                                        }else{
+                                            openDialog("Can't sign in with your account", "It seems that the email associated to this account has not been verified.\nPlease remember to verify your email address to fully experience the app!");
+                                        }
                                     } else {
                                         Log.d(MainActivity.TAG, "TOKEN DOESN'T EXISTS");
                                         // Handle error -> task.getException();
                                     }
-                                    updateUI(mUser);
+                                    updateUI(null);
                                     //setUI(username[0]);
                                 }
                             });
@@ -211,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
         // the GoogleSignInAccount will be non-null.
         //GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         //if(account != null){
+
         //    Log.d(TAG,"GAccount:"+account+"=====Current User:"+FirebaseAuth.getInstance().getCurrentUser());
         //    updateUI(account);
         //}else{
@@ -221,14 +229,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI(final Object currentUser) {
-
-        setUI(null);
-        /*navUsername.setText("Guest");
-        itemFollowedPubs.setVisible(false);
-        itemInterestEvents.setVisible(false);
-        itemSettings.setVisible(false);
-        itemLogout.setVisible(false);
-        itemLogin.setVisible(true);*/
         if(currentUser != null) {
             if(currentUser instanceof FirebaseUser){
                 if( ((FirebaseUser)currentUser).isEmailVerified()){
@@ -263,6 +263,8 @@ public class MainActivity extends AppCompatActivity {
                 username = ((GoogleSignInAccount) currentUser).getDisplayName();
                 setUI(username);
             }
+        }else{
+            setUI(null);
         }
         /*navUsername.setText(username);
         itemFollowedPubs.setVisible(true);
@@ -273,9 +275,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUI(String username){
+        invalidateOptionsMenu();
+        navigationView.invalidate();
         boolean validUser = username != null && username != "";
         Log.d(TAG,"USERNAME SET UI:"+username+"** valid:"+validUser+"**");
         navUsername.setText(validUser ? username :"Guest");
+        /*((View)itemFollowedPubs).setVisibility(validUser?View.VISIBLE:View.GONE);
+        ((View)itemInterestEvents).setVisibility(validUser?View.VISIBLE:View.GONE);
+        ((View)itemSettings).setVisibility(validUser?View.VISIBLE:View.GONE);
+        ((View)itemLogout).setVisibility(validUser?View.VISIBLE:View.GONE);
+        ((View)itemLogin).setVisibility(!validUser?View.VISIBLE:View.GONE);*/
         itemFollowedPubs.setVisible(validUser);
         itemInterestEvents.setVisible(validUser);
         itemSettings.setVisible(validUser);
@@ -283,11 +292,11 @@ public class MainActivity extends AppCompatActivity {
         itemLogin.setVisible(!validUser);
     }
 
-    private void openDialog(String dialogStr) {
+    private void openDialog(String title, String dialogStr) {
         if(dialogStr != null){
             new MaterialAlertDialogBuilder(this).setMessage(dialogStr)
                     .setIcon(R.drawable.ic_baseline_error_24)
-                    .setTitle("Account's token is obsolete")
+                    .setTitle(title)
                     .create().show();
         }
     }
@@ -305,6 +314,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         Log.d(TAG,"ON RESUME");
+        updateUI(FirebaseAuth.getInstance().getCurrentUser());
         super.onResume();
+
     }
 }

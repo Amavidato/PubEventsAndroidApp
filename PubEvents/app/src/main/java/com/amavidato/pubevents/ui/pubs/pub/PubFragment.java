@@ -5,7 +5,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -33,6 +32,7 @@ import com.amavidato.pubevents.ui.events.list.EventItem;
 import com.amavidato.pubevents.ui.pubs.pub.events.PubEventsListRecyclerViewAdapter;
 import com.amavidato.pubevents.ui.pubs.pub.ratings.RatingItem;
 import com.amavidato.pubevents.ui.pubs.pub.ratings.RatingsListRecyclerViewAdapter;
+import com.amavidato.pubevents.utility.AccountManager;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.MyFragment;
 import com.amavidato.pubevents.utility.list_abstract_classes.MyItem;
@@ -75,8 +75,10 @@ public class PubFragment extends MyFragment {
     private ConstraintLayout containerLayout;
     private RatingsListRecyclerViewAdapter ratingsRecyclerAdapter;
     private PubEventsListRecyclerViewAdapter eventsRecyclerAdapter;
+
     private ConstraintLayout ratingsLayoutContainer;
     private ConstraintLayout eventsLayoutContainer;
+
     private ConstraintLayout pubContainerRatings;
     private ConstraintLayout pubContainerEvents;
     private ConstraintLayout pubContainerRatingForm;
@@ -110,7 +112,7 @@ public class PubFragment extends MyFragment {
         pub_follow_btn_add.setVisibility(View.GONE);
         pub_follow_btn_remove.setVisibility(View.GONE);
 
-        if(FirebaseAuth.getInstance().getCurrentUser()!= null){
+        if(AccountManager.isCurrentUserValid()){
             pub_follow_btn.setVisibility(View.VISIBLE);
             String uid = FirebaseAuth.getInstance().getCurrentUser().getEmail();
             FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.USERS)
@@ -418,7 +420,7 @@ public class PubFragment extends MyFragment {
                         ratingsRecyclerAdapter = new RatingsListRecyclerViewAdapter(ratings,getActivity());
                         recyclerView.setAdapter(ratingsRecyclerAdapter);
 
-                        if(FirebaseAuth.getInstance().getCurrentUser()==null){
+                        if(!AccountManager.isCurrentUserValid()){
                             pubContainerRatingForm.setVisibility(View.GONE);
                         }else{
                             pubContainerRatingForm.setVisibility(View.VISIBLE);
@@ -437,7 +439,7 @@ public class PubFragment extends MyFragment {
     private void createEventsList(){
         progressBar.setVisibility(View.VISIBLE);
         //ratingsLayoutContainer = (ConstraintLayout) View.inflate(this.getContext(),R.layout.pub_ratings_list, (ViewGroup) getView());
-        eventsLayoutContainer = (ConstraintLayout) getLayoutInflater().inflate(R.layout.pub_events_list, null);
+        eventsLayoutContainer = (ConstraintLayout) getLayoutInflater().inflate(R.layout.simple_events_list, null);
 
         // Set the adapter
         View listView = eventsLayoutContainer.findViewById(R.id.pub_events);
