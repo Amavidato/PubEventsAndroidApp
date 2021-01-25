@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -143,7 +144,7 @@ public class EventFragment extends MyFragment {
                 String s = event_buy_input.getText().toString();
                 Double numberOfTickets = Double.parseDouble(s.isEmpty() ? "0" : s);
                 Double tot = pricePerUnit * numberOfTickets;
-                event_buy_tot.setText(tot.toString());
+                event_buy_tot.setText(BigDecimal.valueOf(tot).setScale(2).toString());
             }
         });
 
@@ -167,16 +168,17 @@ public class EventFragment extends MyFragment {
                         event_maxCapacity.setText(((Long) data.get(DBManager.CollectionsPaths.EventFields.MAX_CAPACITY)).toString());
                         Object pTmp = data.get(DBManager.CollectionsPaths.PubFields.OVERALL_RATING);
                         if(pTmp instanceof Double){
-                            event_price.setText(((Double) data.get(DBManager.CollectionsPaths.EventFields.PRICE)).toString());
+                            event_price.setText(BigDecimal.valueOf((Double) data.get(DBManager.CollectionsPaths.EventFields.PRICE)).setScale(2).toString());
                         }else{// if (pTmp instanceof Long){
-                            event_price.setText(((Long) data.get(DBManager.CollectionsPaths.EventFields.PRICE)).toString());
+                            event_price.setText(BigDecimal.valueOf((Double)(((Long) data.get(DBManager.CollectionsPaths.EventFields.PRICE)).doubleValue())).setScale(2).toString());
+
                         }
                         event_type.setText((String) data.get(DBManager.CollectionsPaths.EventFields.TYPE));
 
                         event_buy_price.setText(event_price.getText());
                         String toBuy = event_buy_input.getText().toString();
                         Double tot = Double.parseDouble((String) event_price.getText()) * Double.parseDouble( toBuy.isEmpty() ? "0" : toBuy);
-                        event_buy_tot.setText(tot.toString());
+                        event_buy_tot.setText(BigDecimal.valueOf(tot).setScale(2).toString());
                     }else{
                         Log.d(TAG, "get event DATA NULL");
                     }

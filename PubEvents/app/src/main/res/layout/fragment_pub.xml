@@ -9,7 +9,6 @@
     android:background="#ffffff"
     tools:context=".ui.pubs.pub.PubFragment">
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
