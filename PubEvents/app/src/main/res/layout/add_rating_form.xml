@@ -3,7 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/pubview_container_rating_form">
+    android:id="@+id/pubview_container_rating_form"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/rating_form_title"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:text="Add your comment"
+        android:textStyle="bold"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/rating_form_value_container"
@@ -11,7 +23,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rating_form_title"
         app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
@@ -39,7 +51,8 @@
     <EditText
         android:id="@+id/rating_form_comment"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.4"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
@@ -60,6 +73,6 @@
         app:layout_constraintEnd_toEndOf="@id/rating_form_value_container"
         android:textStyle="bold"
         android:textAllCaps="false"
-        android:text="Add your rating"/>
+        android:text="Confirm"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

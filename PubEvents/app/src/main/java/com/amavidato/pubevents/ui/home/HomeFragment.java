@@ -16,11 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.LayoutInflaterCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,9 +26,8 @@ import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Event;
 import com.amavidato.pubevents.model.Pub;
 import com.amavidato.pubevents.ui.events.list.EventItem;
-import com.amavidato.pubevents.ui.home.lists.HomeEventsAcquiredRecyclerViewAdapter;
-import com.amavidato.pubevents.ui.home.lists.HomeEventsAllRecyclerViewAdapter;
-import com.amavidato.pubevents.ui.home.lists.HomePubsAllRecyclerViewAdapter;
+import com.amavidato.pubevents.ui.home.lists.HomeEventsRecyclerViewAdapter;
+import com.amavidato.pubevents.ui.home.lists.HomePubsRecyclerViewAdapter;
 import com.amavidato.pubevents.ui.pubs.list.PubItem;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.list_abstract_classes.MyItem;
@@ -55,10 +52,10 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
 
-    private HomeEventsAllRecyclerViewAdapter eventsAcquiredRecyclerAdapter;
-    private HomeEventsAllRecyclerViewAdapter eventsAllRecyclerAdapter;
-    private HomePubsAllRecyclerViewAdapter pubsFollowedRecyclerAdapter;
-    private HomePubsAllRecyclerViewAdapter pubsAllRecyclerAdapter;
+    private HomeEventsRecyclerViewAdapter eventsAcquiredRecyclerAdapter;
+    private HomeEventsRecyclerViewAdapter eventsAllRecyclerAdapter;
+    private HomePubsRecyclerViewAdapter pubsFollowedRecyclerAdapter;
+    private HomePubsRecyclerViewAdapter pubsAllRecyclerAdapter;
 
     private ConstraintLayout eventsAcquiredLayoutContainer;
     private ConstraintLayout eventsAllLayoutContainer;
@@ -228,7 +225,7 @@ public class HomeFragment extends Fragment {
                                                         itemsDone[0]++;
                                                         if (itemsDone[0] == numItems) {
                                                             progressBar.setVisibility(View.INVISIBLE);
-                                                            eventsAcquiredRecyclerAdapter = new HomeEventsAllRecyclerViewAdapter(events,getActivity());
+                                                            eventsAcquiredRecyclerAdapter = new HomeEventsRecyclerViewAdapter(events,getActivity());
                                                             recyclerView.setAdapter(eventsAcquiredRecyclerAdapter);
                                                             if(eventsAcquiredLayoutContainer.getParent() != null){
                                                                 ConstraintLayout l  = ((ConstraintLayout)eventsAcquiredLayoutContainer.getParent());
@@ -345,7 +342,7 @@ public class HomeFragment extends Fragment {
                                         itemsDone[0]++;
                                         if (itemsDone[0] == numItems) {
                                             progressBar.setVisibility(View.INVISIBLE);
-                                            eventsAllRecyclerAdapter = new HomeEventsAllRecyclerViewAdapter(events,getActivity());
+                                            eventsAllRecyclerAdapter = new HomeEventsRecyclerViewAdapter(events,getActivity());
                                             recyclerView.setAdapter(eventsAllRecyclerAdapter);
                                             if(eventsAllLayoutContainer.getParent() != null){
                                                 ConstraintLayout l  = ((ConstraintLayout)eventsAllLayoutContainer.getParent());
@@ -443,7 +440,7 @@ public class HomeFragment extends Fragment {
                                                             itemsDone[0]++;
                                                             if (itemsDone[0] == numItems) {
                                                                 progressBar.setVisibility(View.INVISIBLE);
-                                                                pubsFollowedRecyclerAdapter = new HomePubsAllRecyclerViewAdapter(pubs,getActivity());
+                                                                pubsFollowedRecyclerAdapter = new HomePubsRecyclerViewAdapter(pubs,getActivity());
                                                                 recyclerView.setAdapter(pubsFollowedRecyclerAdapter);
                                                                 if(pubsFollowedLayoutContainer.getParent() != null){
                                                                     ConstraintLayout l  = ((ConstraintLayout) pubsFollowedLayoutContainer.getParent());
@@ -536,7 +533,7 @@ public class HomeFragment extends Fragment {
                                                 itemsDone[0]++;
                                                 if (itemsDone[0] == numItems) {
                                                     progressBar.setVisibility(View.INVISIBLE);
-                                                    pubsAllRecyclerAdapter = new HomePubsAllRecyclerViewAdapter(pubs,getActivity());
+                                                    pubsAllRecyclerAdapter = new HomePubsRecyclerViewAdapter(pubs,getActivity());
                                                     recyclerView.setAdapter(pubsAllRecyclerAdapter);
                                                     if(pubsAllLayoutContainer.getParent() != null){
                                                         ConstraintLayout l  = ((ConstraintLayout) pubsAllLayoutContainer.getParent());

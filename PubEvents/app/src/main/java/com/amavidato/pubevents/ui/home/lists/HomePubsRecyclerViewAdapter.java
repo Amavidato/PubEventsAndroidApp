@@ -19,11 +19,11 @@ import com.amavidato.pubevents.utility.list_abstract_classes.SimpleRecyclerViewA
 
 import java.util.List;
 
-public class HomePubsAllRecyclerViewAdapter extends SimpleRecyclerViewAdapter {
+public class HomePubsRecyclerViewAdapter extends SimpleRecyclerViewAdapter {
 
-    private static final String TAG = HomePubsAllRecyclerViewAdapter.class.getSimpleName();
+    private static final String TAG = HomePubsRecyclerViewAdapter.class.getSimpleName();
 
-    public HomePubsAllRecyclerViewAdapter(List<MyItem> pubItems, Activity activity) {
+    public HomePubsRecyclerViewAdapter(List<MyItem> pubItems, Activity activity) {
         super(pubItems, activity);
     }
 

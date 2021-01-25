@@ -13,18 +13,17 @@ import com.amavidato.pubevents.model.Event;
 import com.amavidato.pubevents.ui.events.list.EventItem;
 import com.amavidato.pubevents.ui.events.list.EventViewHolder;
 import com.amavidato.pubevents.ui.home.HomeFragmentDirections;
-import com.amavidato.pubevents.ui.pubs.pub.events.PubEventsListRecyclerViewAdapter;
 import com.amavidato.pubevents.utility.list_abstract_classes.GeneralViewHolder;
 import com.amavidato.pubevents.utility.list_abstract_classes.MyItem;
 import com.amavidato.pubevents.utility.list_abstract_classes.SimpleRecyclerViewAdapter;
 
 import java.util.List;
 
-public class HomeEventsAllRecyclerViewAdapter extends SimpleRecyclerViewAdapter {
+public class HomeEventsRecyclerViewAdapter extends SimpleRecyclerViewAdapter {
 
-    private static final String TAG = HomeEventsAllRecyclerViewAdapter.class.getSimpleName();
+    private static final String TAG = HomeEventsRecyclerViewAdapter.class.getSimpleName();
 
-    public HomeEventsAllRecyclerViewAdapter(List<MyItem> eventItems, Activity activity) {
+    public HomeEventsRecyclerViewAdapter(List<MyItem> eventItems, Activity activity) {
         super(eventItems, activity);
     }
 
