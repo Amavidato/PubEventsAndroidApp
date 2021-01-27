@@ -54,6 +54,7 @@
                     android:layout_height="0dp"
                     app:layout_constraintHeight_percent="0.631"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:scaleType="fitXY"
                     app:srcCompat="@drawable/ic_menu_gallery" />
                 <TextView
                     android:id="@+id/eventview_name"

@@ -61,7 +61,7 @@ public class PubListRecyclerViewAdapter extends GeneralRecyclerViewAdapter {
         PubItem item = (PubItem) toShow.get(position);
         Pub pub = (Pub) item.object;
         tmp.mItem = item;
-        tmp.mImgView.setImageResource(R.drawable.ic_menu_gallery);
+        tmp.initImage();
         tmp.mNameView.setText(pub.getName());
         tmp.mCityView.setText(pub.getCity());
 

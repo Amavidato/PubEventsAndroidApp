@@ -50,6 +50,7 @@
                 android:layout_height="250dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                android:scaleType="fitXY"
                 app:srcCompat="@drawable/ic_menu_gallery" />
 
             <TextView

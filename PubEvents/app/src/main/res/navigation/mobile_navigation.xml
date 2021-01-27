@@ -18,12 +18,6 @@
             app:destination="@id/pubFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/nav_settings"
-        android:name="com.amavidato.pubevents.ui.account.settings.SettingsFragment"
-        android:label="@string/menu_settings"
-        tools:layout="@layout/fragment_settings" />
-
     <activity
         android:id="@+id/nav_login"
         android:name="com.amavidato.pubevents.ui.account.login.LoginActivity"

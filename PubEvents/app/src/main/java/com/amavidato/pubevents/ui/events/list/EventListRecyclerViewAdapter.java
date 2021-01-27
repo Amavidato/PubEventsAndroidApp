@@ -68,7 +68,7 @@ public class EventListRecyclerViewAdapter extends GeneralRecyclerViewAdapter {
         EventItem item = (EventItem) toShow.get(position);
         Event event = (Event) item.object;
         tmp.mItem = item;
-        tmp.mImgView.setImageResource(R.drawable.ic_menu_gallery);
+        tmp.initImage();
         tmp.mNameView.setText(event.getName());
         tmp.mPubNameView.setText(event.getPub().getName());
 

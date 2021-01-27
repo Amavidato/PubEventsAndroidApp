@@ -33,6 +33,7 @@ import com.amavidato.pubevents.ui.pubs.pub.events.PubEventsListRecyclerViewAdapt
 import com.amavidato.pubevents.ui.pubs.pub.ratings.RatingItem;
 import com.amavidato.pubevents.ui.pubs.pub.ratings.RatingsListRecyclerViewAdapter;
 import com.amavidato.pubevents.utility.AccountManager;
+import com.amavidato.pubevents.utility.ImageManager;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.MyFragment;
 import com.amavidato.pubevents.utility.list_abstract_classes.MyItem;
@@ -108,6 +109,8 @@ public class PubFragment extends MyFragment {
         pub_follow_btn = root.findViewById(R.id.pubview_follow_btn);
         pub_follow_btn_add = root.findViewById(R.id.pubview_follow_btn_add);
         pub_follow_btn_remove = root.findViewById(R.id.pubview_follow_btn_rmv);
+
+        ImageManager.loadImageIntoView("images/pubs/"+pubID+".jpg",pub_img);
 
         pub_follow_btn_add.setVisibility(View.GONE);
         pub_follow_btn_remove.setVisibility(View.GONE);

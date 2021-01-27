@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.utility.AccountManager;
+import com.amavidato.pubevents.utility.ImageManager;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.MyFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -46,6 +48,7 @@ public class EventFragment extends MyFragment {
 
     private EventViewModel eventViewModel;
     private TextView event_name;
+    private ImageView event_img;
     private TextView event_date;
     private TextView event_time;
     private TextView event_pub;
@@ -76,6 +79,7 @@ public class EventFragment extends MyFragment {
         View root = inflater.inflate(R.layout.fragment_event, container, false);
 
         event_name = root.findViewById(R.id.eventview_name);
+        event_img = root.findViewById(R.id.eventview_image);
         event_pub = root.findViewById(R.id.eventview_pub);
         event_date = root.findViewById(R.id.eventview_date);
         event_time = root.findViewById(R.id.eventview_time);
@@ -89,6 +93,8 @@ public class EventFragment extends MyFragment {
         event_buy_input = root.findViewById(R.id.eventview_buy_number);
         event_buy_btn = root.findViewById(R.id.eventview_buy_btn);
         ticketsInfoUserContainerLayout = root.findViewById(R.id.eventview_tickets_info_user);
+
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if(AccountManager.isCurrentUserValid()){
@@ -174,6 +180,7 @@ public class EventFragment extends MyFragment {
 
                         }
                         event_type.setText((String) data.get(DBManager.CollectionsPaths.EventFields.TYPE));
+                        ImageManager.loadImageIntoView("images/events/"+event_type.getText()+".jpg",event_img);
 
                         event_buy_price.setText(event_price.getText());
                         String toBuy = event_buy_input.getText().toString();

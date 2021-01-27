@@ -42,7 +42,7 @@ public class HomeEventsRecyclerViewAdapter extends SimpleRecyclerViewAdapter {
             Log.d(TAG, "EventItem:" + item);
             Event event = (Event) item.object;
             tmp.mItem = item;
-            tmp.mImgView.setImageResource(R.drawable.ic_menu_gallery);
+            tmp.initImage();
             tmp.mNameView.setText(event.getName());
             tmp.mPubNameView.setText(event.getPub().getName());
             tmp.mPrice.setText(((Double) event.getPrice()).toString());

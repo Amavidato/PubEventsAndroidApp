@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Pub;
+import com.amavidato.pubevents.utility.ImageManager;
 import com.amavidato.pubevents.utility.list_abstract_classes.GeneralViewHolder;
 
 public class PubViewHolder extends GeneralViewHolder {
@@ -52,5 +53,10 @@ public class PubViewHolder extends GeneralViewHolder {
                 break;
         }
 
+    }
+
+    public void initImage(){
+        String path = "images/pubs/" + mItem.id + ".jpg";
+        ImageManager.loadImageIntoView(path,mImgView);
     }
 }

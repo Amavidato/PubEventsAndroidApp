@@ -6,6 +6,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amavidato.pubevents.R;
+import com.amavidato.pubevents.model.Event;
+import com.amavidato.pubevents.utility.ImageManager;
 import com.amavidato.pubevents.utility.list_abstract_classes.GeneralViewHolder;
 
 public class EventViewHolder extends GeneralViewHolder {
@@ -28,5 +30,10 @@ public class EventViewHolder extends GeneralViewHolder {
         this.mEventType = view.findViewById(R.id.event_item_type);
         this.mDate = view.findViewById(R.id.event_item_date);
         this.mSeats = view.findViewById(R.id.event_item_seats);
+    }
+
+    public void initImage(){
+        String path = "images/events/" + ((Event)mItem.object).getType().toString().toLowerCase() + ".jpg";
+        ImageManager.loadImageIntoView(path,mImgView);
     }
 }

@@ -1,12 +1,12 @@
 package com.amavidato.pubevents;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
 
+import com.amavidato.pubevents.utility.ImageManager;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.MyFragment;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -19,11 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -32,7 +28,6 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -44,12 +39,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Map;
-
-import static com.amavidato.pubevents.ui.findpub.FindPubsFragment.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
 
     private TextView navUsername;
+    private ImageView navUserImg;
     private MenuItem itemFollowedPubs;
     private MenuItem itemInterestEvents;
-    private MenuItem itemSettings;
     private MenuItem itemLogout;
     private MenuItem itemLogin;
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -158,8 +152,7 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home,
-                R.id.nav_followed_pubs, R.id.nav_acquired_events, R.id.nav_find_pub,
-                R.id.nav_settings, R.id.nav_login, R.id.nav_login,R.id.nav_logout)
+                R.id.nav_followed_pubs, R.id.nav_acquired_events, R.id.nav_find_pub, R.id.nav_login, R.id.nav_login,R.id.nav_logout)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -169,11 +162,11 @@ public class MainActivity extends AppCompatActivity {
         //Lines to change dinamically the content of the header
         View headerView = navigationView.getHeaderView(0);
         navUsername = headerView.findViewById(R.id.nav_username);
+        navUserImg = headerView.findViewById(R.id.nav_user_img);
         //Lines to change dinamically the content of the menu
         Menu menuView = navigationView.getMenu();
         itemFollowedPubs = menuView.findItem(R.id.nav_followed_pubs);
         itemInterestEvents = menuView.findItem(R.id.nav_acquired_events);
-        itemSettings = menuView.findItem(R.id.nav_settings);
         itemLogout = menuView.findItem(R.id.nav_logout);
         itemLogout.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -243,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
                                     Map<String, Object> data = document.getData();
                                     username = (String) data.get(DBManager.CollectionsPaths.UserFields.USERNAME);
                                     Log.d(TAG, "USERNAME FROM DATA:"+username);
-                                    setUI(username);
+                                    setUI((FirebaseUser) currentUser);
                                     //navUsername.setText(username);
                                     Log.d(TAG, "DocumentSnapshot data: " + data + " currUs:"+currentUser);
                                 } else {
@@ -261,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
             }else if(currentUser instanceof GoogleSignInAccount){
                 Log.d(TAG, "Current google user:"+FirebaseAuth.getInstance().getCurrentUser().toString());
                 username = ((GoogleSignInAccount) currentUser).getDisplayName();
-                setUI(username);
+                setUI((FirebaseUser) currentUser);
             }
         }else{
             setUI(null);
@@ -274,20 +267,27 @@ public class MainActivity extends AppCompatActivity {
         itemLogin.setVisible(false);*/
     }
 
-    private void setUI(String username){
+    private void setUI(FirebaseUser user){
+        String username = "";
+        Uri photoUri = null;
+        if(user != null){
+            username = user.getDisplayName();
+            photoUri = user.getPhotoUrl();
+        }
         invalidateOptionsMenu();
         navigationView.invalidate();
         boolean validUser = username != null && username != "";
-        Log.d(TAG,"USERNAME SET UI:"+username+"** valid:"+validUser+"**");
+        Log.d(TAG,"USERNAME SET UI:"+ username +"** valid:"+validUser+"**");
         navUsername.setText(validUser ? username :"Guest");
         /*((View)itemFollowedPubs).setVisibility(validUser?View.VISIBLE:View.GONE);
         ((View)itemInterestEvents).setVisibility(validUser?View.VISIBLE:View.GONE);
         ((View)itemSettings).setVisibility(validUser?View.VISIBLE:View.GONE);
         ((View)itemLogout).setVisibility(validUser?View.VISIBLE:View.GONE);
         ((View)itemLogin).setVisibility(!validUser?View.VISIBLE:View.GONE);*/
+        Glide.with(this).load(photoUri).placeholder(R.drawable.ic_baseline_account_circle_24).into(navUserImg);
+        //ImageManager.uploadImage("images/users/"+user.getEmail(),photoUri);
         itemFollowedPubs.setVisible(validUser);
         itemInterestEvents.setVisible(validUser);
-        itemSettings.setVisible(validUser);
         itemLogout.setVisible(validUser);
         itemLogin.setVisible(!validUser);
     }

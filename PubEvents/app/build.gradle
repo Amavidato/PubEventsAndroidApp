@@ -48,9 +48,13 @@ dependencies {
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'com.google.firebase:firebase-storage:19.2.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+
+    //for images managing
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
 }
 
 apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin

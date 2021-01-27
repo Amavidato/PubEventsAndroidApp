@@ -42,7 +42,7 @@ public class HomePubsRecyclerViewAdapter extends SimpleRecyclerViewAdapter {
             Log.d(TAG, "PubItem:" + item);
             Pub pub = (Pub) item.object;
             tmp.mItem = item;
-            tmp.mImgView.setImageResource(R.drawable.ic_menu_gallery);
+            tmp.initImage();
             tmp.mNameView.setText(pub.getName());
             tmp.mCityView.setText(pub.getCity());
             tmp.mRatingView.setText(((Double)pub.getOverallRating()).toString());

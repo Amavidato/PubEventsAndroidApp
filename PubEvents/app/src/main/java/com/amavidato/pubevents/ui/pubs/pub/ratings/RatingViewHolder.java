@@ -5,6 +5,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amavidato.pubevents.R;
+import com.amavidato.pubevents.model.Rating;
+import com.amavidato.pubevents.utility.ImageManager;
 import com.amavidato.pubevents.utility.list_abstract_classes.GeneralViewHolder;
 
 public class RatingViewHolder extends GeneralViewHolder {
@@ -19,5 +21,10 @@ public class RatingViewHolder extends GeneralViewHolder {
         mNameView = view.findViewById(R.id.rating_user_name);
         mValueView = view.findViewById(R.id.rating_user_value);
         mCommentView = view.findViewById(R.id.rating_user_comment);
+    }
+
+    public void initImage(){
+        String path = "images/users/" + ((Rating)mItem.object).getEmail();
+        ImageManager.loadImageIntoView(path,mImgView);
     }
 }
