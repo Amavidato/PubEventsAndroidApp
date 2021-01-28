@@ -1,11 +1,12 @@
 package com.amavidato.pubevents;
 
+import android.app.NotificationManager;
 import android.net.Uri;
 import android.os.Bundle;
 
-import com.amavidato.pubevents.utility.ImageManager;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.MyFragment;
+import com.amavidato.pubevents.utility.notifications.MyNotificationManager;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -81,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
         }
         //openDialog(dialogStr);
         setContentView(R.layout.activity_main);
+
+        final MyNotificationManager myNotificationManager = new MyNotificationManager(this);
+        myNotificationManager.createNotificationChannel(MyNotificationManager.ChannelID.REMINDER,"Reminder channel", "Channel used to notify user about incoming events", null);
+
+
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -173,6 +179,9 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 mAuth.signOut();
                 mGoogleSignInClient.signOut();
+
+                myNotificationManager.createNotification(MyNotificationManager.ChannelID.REMINDER, "Incoming event","Your event will have place soon!",null);
+
                 MainActivity.this.onStart();
                 return false;
             }
