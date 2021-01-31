@@ -1,9 +1,11 @@
 package com.amavidato.pubevents.ui.pubs.list;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -70,6 +72,7 @@ public class PubsListFragment extends GeneralListFragment {
                 .document(cityID)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.MyFragment;
 import com.amavidato.pubevents.utility.notifications.MyNotificationManager;
+import com.amavidato.pubevents.utility.suggestions.SuggestionsManager;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -194,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });*/
-
     }
 
 

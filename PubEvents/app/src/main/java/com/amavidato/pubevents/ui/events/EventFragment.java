@@ -279,6 +279,24 @@ public class EventFragment extends MyFragment {
                                 Toast.makeText(EventFragment.this.getContext(), "ERROR: " + e, Toast.LENGTH_SHORT).show();
                             }
                         });
+
+                        FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.USERS)
+                                .document(uid)
+                                .collection(DBManager.CollectionsPaths.UserFields.LAST_EVENTS)
+                                .document(eventID)
+                                .set(new HashMap<String,String>())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "OnSuccess add Event in LastEvents");
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG,"OnFailure add Event in LastEvents. Error:"+e);
+                                Toast.makeText(EventFragment.this.getContext(), "ERROR: " + e, Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     } else {
 
                     }

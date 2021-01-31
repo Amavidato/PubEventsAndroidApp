@@ -115,4 +115,16 @@ public class Event implements ModelObj {
         this.type = type;
     }
 
+    @Override
+    public String toString() {
+        return "Event{" +
+                "name='" + name + '\'' +
+                ", date=" + date +
+                ", pub=" + pub +
+                ", price=" + price +
+                ", max_capacity=" + max_capacity +
+                ", reserved_seats=" + reserved_seats +
+                ", type=" + type +
+                '}';
+    }
 }

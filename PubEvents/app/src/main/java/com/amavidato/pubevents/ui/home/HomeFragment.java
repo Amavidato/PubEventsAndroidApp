@@ -31,6 +31,9 @@ import com.amavidato.pubevents.ui.home.lists.HomePubsRecyclerViewAdapter;
 import com.amavidato.pubevents.ui.pubs.list.PubItem;
 import com.amavidato.pubevents.utility.db.DBManager;
 import com.amavidato.pubevents.utility.list_abstract_classes.MyItem;
+import com.amavidato.pubevents.utility.suggestions.Candidate;
+import com.amavidato.pubevents.utility.suggestions.OnSuggestionsCompleteListerer;
+import com.amavidato.pubevents.utility.suggestions.SuggestionsManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
@@ -47,11 +50,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements OnSuggestionsCompleteListerer {
     private static final String TAG = HomeFragment.class.getSimpleName();
 
     private HomeViewModel homeViewModel;
-
     private HomeEventsRecyclerViewAdapter eventsAcquiredRecyclerAdapter;
     private HomeEventsRecyclerViewAdapter eventsAllRecyclerAdapter;
     private HomePubsRecyclerViewAdapter pubsFollowedRecyclerAdapter;
@@ -67,9 +69,17 @@ public class HomeFragment extends Fragment {
     private ConstraintLayout homeContainerPubsFollowed;
     private ConstraintLayout homeContainerPubsAll;
 
+    private boolean loadingAcquiredEvents;
+    private boolean loadingSuggestedEvents;
+    private boolean loadingFollowedPubs;
+    private boolean loadingSuggestedPubs;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        loadingAcquiredEvents = false;
+        loadingSuggestedEvents = false;
+        loadingFollowedPubs = false;
+        loadingSuggestedPubs = false;
         Log.d(TAG, "onCreateView");
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
@@ -81,7 +91,7 @@ public class HomeFragment extends Fragment {
                 textView.setText(s);
             }
         });
-        
+
         homeContainerEventsAcquired = root.findViewById(R.id.home_container_events_acquired_date_near_to_far);
         homeContainerEventsAll = root.findViewById(R.id.home_container_events_all_date_near_to_far);
         homeContainerPubsFollowed = root.findViewById(R.id.home_container_pubs_followed_proximity_near_to_far);
@@ -96,6 +106,7 @@ public class HomeFragment extends Fragment {
                     mUser.getIdToken(true)
                             .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
                                 public void onComplete(@NonNull Task<GetTokenResult> task) {
+                                    Log.d(TAG, "TOKEN");
                                     if (task.isSuccessful()) {
                                         String idToken = task.getResult().getToken();
                                         username[0] = mUser.getDisplayName();
@@ -111,11 +122,11 @@ public class HomeFragment extends Fragment {
                             });
                 }else{
                     Log.d(TAG, "User null...");
-                    //createLists();
+                    createLists();
                 }
             }
         });
-        createLists();
+        //createLists();
         return root;
     }
 
@@ -127,14 +138,41 @@ public class HomeFragment extends Fragment {
             homeContainerEventsAll.removeAllViews();
             homeContainerPubsFollowed.removeAllViews();
             homeContainerPubsAll.removeAllViews();
-            createEventsAcquiredList();
-            createEventsAllList();
-            createPubsFollowedList();
-            createPubsAllList();
+            if(!loadingAcquiredEvents){
+                loadingAcquiredEvents = true;
+                createEventsAcquiredList();
+            }
+            if(!loadingFollowedPubs){
+                loadingFollowedPubs = true;
+                createPubsFollowedList();
+            }
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if(!loadingSuggestedEvents){
+                if(user == null){
+                    createEventsAllList();
+                }else{
+                    SuggestionsManager suggestionsManager = new SuggestionsManager();
+                    loadingSuggestedEvents = true;
+                    suggestionsManager.getSuggestions(this, SuggestionsManager.TypeOfSuggestion.EVENTS);
+                }
+
+            }
+            if(!loadingSuggestedPubs){
+                if(user == null){
+                    createPubsAllList();
+                }else{
+                    SuggestionsManager suggestionsManager = new SuggestionsManager();
+                    loadingSuggestedPubs = true;
+                    suggestionsManager.getSuggestions(this, SuggestionsManager.TypeOfSuggestion.PUBS);
+                }
+            }
         }
     }
 
+
+
     private void createEventsAcquiredList() {
+
         Log.d(TAG, "Create Events Acquired Lists");
         eventsAcquiredLayoutContainer = (ConstraintLayout) getLayoutInflater().inflate(R.layout.simple_events_list, null);
         final ProgressBar progressBar = eventsAcquiredLayoutContainer.findViewById(R.id.progressBar);
@@ -237,26 +275,35 @@ public class HomeFragment extends Fragment {
                                                                     Log.d(TAG, "ACQUIRED AFTER Constr. Lay.:"+l+"----ID:"+l.getId());
                                                                 }
                                                             }
+                                                            loadingAcquiredEvents = false;
                                                             homeContainerEventsAcquired.addView(eventsAcquiredLayoutContainer);
                                                         }
                                                     }else {
+                                                        loadingAcquiredEvents = false;
+
                                                         Log.d(TAG, "Error getting documents: Event Pub:", task.getException());
                                                     }
                                                 }
                                             });
                                         }else{
+                                            loadingAcquiredEvents = false;
+
                                             Log.d(TAG, "Error getting documents: All Events:", task.getException());
                                         }
                                     }
                                 });
                             }
                         } else {
+                            loadingAcquiredEvents = false;
+
                             Log.d(TAG, "Error getting documents: Acquired Events:", task.getException());
                             Toast.makeText(context,"Error getting pub list from database.\n Please check your connection and try again.",Toast.LENGTH_LONG).show();
                         }
                     }
                 });
             }else {
+                loadingAcquiredEvents = false;
+
             }
         }
     }
@@ -452,9 +499,11 @@ public class HomeFragment extends Fragment {
                                                                         Log.d(TAG, "AFTER Constr. Lay.:"+l+"----ID:"+l.getId());
                                                                     }
                                                                 }
+                                                                loadingFollowedPubs = false;
                                                                 homeContainerPubsFollowed.addView(pubsFollowedLayoutContainer);
                                                             }
                                                         } else {
+                                                            loadingFollowedPubs = false;
                                                             Log.d(TAG, "Error getting documents: ", task.getException());
                                                             pub.setCity("ERROR");
                                                         }
@@ -465,12 +514,18 @@ public class HomeFragment extends Fragment {
 
                             }
                         } else {
+                            loadingFollowedPubs = false;
                             Log.d(TAG, "Error getting documents: Acquired Events:", task.getException());
                             Toast.makeText(context, "Error getting pub list from database.\n Please check your connection and try again.", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
+            }else{
+                loadingFollowedPubs = false;
+
             }
+        }else{
+            loadingFollowedPubs = false;
         }
 
     }
@@ -545,9 +600,11 @@ public class HomeFragment extends Fragment {
                                                             Log.d(TAG, "AFTER Constr. Lay.:"+l+"----ID:"+l.getId());
                                                         }
                                                     }
+                                                    loadingSuggestedPubs = false;
                                                     homeContainerPubsAll.addView(pubsAllLayoutContainer);
                                                 }
                                             } else {
+                                                loadingSuggestedPubs = false;
                                                 Log.d(TAG, "Error getting documents: ", task.getException());
                                                 pub.setCity("ERROR");
                                             }
@@ -555,11 +612,14 @@ public class HomeFragment extends Fragment {
                                     });
                         }
                     } else {
+                        loadingSuggestedPubs = false;
                         Log.d(TAG, "Error getting documents: Acquired Events:", task.getException());
                         Toast.makeText(context, "Error getting pub list from database.\n Please check your connection and try again.", Toast.LENGTH_LONG).show();
                     }
                 }
             });
+        }else{
+            loadingSuggestedPubs = false;
         }
     }
     @Override
@@ -573,5 +633,93 @@ public class HomeFragment extends Fragment {
     public void onStart() {
         super.onStart();
         Log.d(TAG, "onStart");
+    }
+
+    @Override
+    public void onComplete(List<Candidate> candidates, SuggestionsManager.TypeOfSuggestion tos) {
+        Log.d(TAG, "Create Suggested List:"+tos);
+        if(tos == SuggestionsManager.TypeOfSuggestion.EVENTS){
+
+            eventsAllLayoutContainer = (ConstraintLayout) getLayoutInflater().inflate(R.layout.simple_events_list, null);
+
+            final ProgressBar progressBar = eventsAllLayoutContainer.findViewById(R.id.progressBar);
+            progressBar.setVisibility(View.VISIBLE);
+
+            TextView textView = eventsAllLayoutContainer.findViewById(R.id.simple_events_list_title);
+            textView.setText("Suggested Events");
+            // Set the adapter
+            View listView = eventsAllLayoutContainer.findViewById(R.id.pub_events);
+            if (listView instanceof RecyclerView) {
+                final RecyclerView recyclerView = (RecyclerView) listView;
+
+                DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.HORIZONTAL);
+                recyclerView.addItemDecoration(divider);
+
+                final List<MyItem> events = new ArrayList<>();
+                for (Candidate candidate :
+                        candidates) {
+                    events.add(candidate.getItem());
+                }
+
+                progressBar.setVisibility(View.INVISIBLE);
+                eventsAllRecyclerAdapter = new HomeEventsRecyclerViewAdapter(events,getActivity());
+                recyclerView.setAdapter(eventsAllRecyclerAdapter);
+                if(eventsAllLayoutContainer.getParent() != null){
+                    ConstraintLayout l  = ((ConstraintLayout)eventsAllLayoutContainer.getParent());
+                    Log.d(TAG, "ALL EVENTS: Constr. Lay.:"+l+"----ID:"+l.getId());
+                    l.removeView(eventsAllLayoutContainer);
+                    //l.removeViewInLayout(eventsAllLayoutContainer);
+                    l  = ((ConstraintLayout)eventsAllLayoutContainer.getParent());
+                    if(l != null){
+                        Log.d(TAG, "ALL EVENTS: AFTER Constr. Lay.:"+l+"----ID:"+l.getId());
+                    }
+                }
+                loadingSuggestedEvents = false;
+                homeContainerEventsAll.addView(eventsAllLayoutContainer);
+            }else{
+                loadingSuggestedEvents = false;
+            }
+
+        }else{
+            pubsAllLayoutContainer = (ConstraintLayout) getLayoutInflater().inflate(R.layout.simple_pubs_list, null);
+
+            final ProgressBar progressBar = pubsAllLayoutContainer.findViewById(R.id.progressBar);
+            progressBar.setVisibility(View.VISIBLE);
+
+            TextView textView = pubsAllLayoutContainer.findViewById(R.id.simple_pubs_list_title);
+            textView.setText("Suggested Pubs");
+            // Set the adapter
+            View listView = pubsAllLayoutContainer.findViewById(R.id.pubs);
+            if (listView instanceof RecyclerView) {
+                final RecyclerView recyclerView = (RecyclerView) listView;
+
+                DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.HORIZONTAL);
+                recyclerView.addItemDecoration(divider);
+
+                final List<MyItem> pubs = new ArrayList<>();
+                for (Candidate candidate :
+                        candidates) {
+                    pubs.add(candidate.getItem());
+                }
+
+                progressBar.setVisibility(View.INVISIBLE);
+                pubsAllRecyclerAdapter = new HomePubsRecyclerViewAdapter(pubs,getActivity());
+                recyclerView.setAdapter(pubsAllRecyclerAdapter);
+                if(pubsAllLayoutContainer.getParent() != null){
+                    ConstraintLayout l  = ((ConstraintLayout)pubsAllLayoutContainer.getParent());
+                    Log.d(TAG, "ALL PUBS: Constr. Lay.:"+l+"----ID:"+l.getId());
+                    l.removeView(pubsAllLayoutContainer);
+                    //l.removeViewInLayout(eventsAllLayoutContainer);
+                    l  = ((ConstraintLayout)pubsAllLayoutContainer.getParent());
+                    if(l != null){
+                        Log.d(TAG, "ALL PUBS: AFTER Constr. Lay.:"+l+"----ID:"+l.getId());
+                    }
+                }
+                loadingSuggestedEvents = false;
+                homeContainerPubsAll.addView(pubsAllLayoutContainer);
+            }else{
+                loadingSuggestedEvents = false;
+            }
+        }
     }
 }

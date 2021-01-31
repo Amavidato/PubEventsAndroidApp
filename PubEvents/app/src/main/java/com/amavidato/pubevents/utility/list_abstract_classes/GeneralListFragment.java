@@ -99,6 +99,7 @@ public abstract class GeneralListFragment extends Fragment {
             }
         });
         spinnerSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 onItemSortSelected(view);
@@ -119,6 +120,7 @@ public abstract class GeneralListFragment extends Fragment {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     protected void initializeRecyclerAdapter(List<MyItem> items) {
         if(recyclerAdapter != null) {
             String selected = spinnerFilter.getSelectedItem().toString();
@@ -311,6 +313,7 @@ public abstract class GeneralListFragment extends Fragment {
 
     protected abstract void fillModelObjectValues(final DocumentSnapshot document, final List<MyItem> items, final int[] itemsDone, final int numItems, final RecyclerView recyclerView);
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     protected void addItemToList(List<MyItem> items, MyItem itemToAdd, int[] itemsDone, int numItems, RecyclerView recyclerView){
         items.add(itemToAdd);
         itemsDone[0]++;

@@ -9,6 +9,8 @@ public class DBManager {
             public static final String USERNAME = "username";
             public static final String EMAIL = "email";
             public static final String FOLLOWED_PUBS = "followed_pubs";
+            public static final String LAST_EVENTS = "last_events";
+            public static final String LAST_PUBS = "last_pubs";
 
             public static class FollowedPubsFields {
             }

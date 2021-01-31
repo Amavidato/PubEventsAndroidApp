@@ -28,6 +28,7 @@ import com.amavidato.pubevents.R;
 import com.amavidato.pubevents.model.Event;
 import com.amavidato.pubevents.model.Pub;
 import com.amavidato.pubevents.model.Rating;
+import com.amavidato.pubevents.ui.events.EventFragment;
 import com.amavidato.pubevents.ui.events.list.EventItem;
 import com.amavidato.pubevents.ui.pubs.pub.events.PubEventsListRecyclerViewAdapter;
 import com.amavidato.pubevents.ui.pubs.pub.ratings.RatingItem;
@@ -164,6 +165,24 @@ public class PubFragment extends MyFragment {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(PubFragment.this.getContext(),"Addition to followed pubs failed. ERROR: " + e,Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.USERS)
+                            .document(uid)
+                            .collection(DBManager.CollectionsPaths.UserFields.LAST_PUBS)
+                            .document(pubID)
+                            .set(new HashMap<String,String>())
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG, "OnSuccess add Pub in LastPubs");
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG,"OnFailure add Pub in LastPubs. Error:"+e);
+                            Toast.makeText(PubFragment.this.getContext(), "ERROR: " + e, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

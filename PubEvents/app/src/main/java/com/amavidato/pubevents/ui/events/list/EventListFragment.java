@@ -1,10 +1,12 @@
 package com.amavidato.pubevents.ui.events.list;
 
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -96,6 +98,7 @@ public class EventListFragment extends GeneralListFragment{// implements Firebas
         FirebaseFirestore.getInstance().collection(DBManager.CollectionsPaths.PUBS)
                 .document(pubID)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
