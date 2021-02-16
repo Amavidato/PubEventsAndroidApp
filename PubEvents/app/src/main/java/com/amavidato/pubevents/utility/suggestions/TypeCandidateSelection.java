@@ -3,8 +3,6 @@ package com.amavidato.pubevents.utility.suggestions;
 import android.util.Log;
 
 import com.amavidato.pubevents.model.Event;
-import com.amavidato.pubevents.ui.events.list.EventItem;
-import com.amavidato.pubevents.ui.events.list.ScoreCalculator;
 import com.amavidato.pubevents.utility.list_abstract_classes.MyItem;
 
 import java.util.Collections;

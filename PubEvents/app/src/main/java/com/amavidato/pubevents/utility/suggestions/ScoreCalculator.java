@@ -1,4 +1,4 @@
-package com.amavidato.pubevents.ui.events.list;
+package com.amavidato.pubevents.utility.suggestions;
 
 import android.util.Log;
 
